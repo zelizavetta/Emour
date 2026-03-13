@@ -38,10 +38,6 @@ module.exports = {
       bundler: "metro",
       favicon: "./assets/favicon.png"
     },
-    plugins: ["expo-router"],
-    experiments: {
-      typedRoutes: true
-    },
     extra: {
       appEnv: APP_ENV,
       apiUrl: process.env.EXPO_PUBLIC_API_URL,

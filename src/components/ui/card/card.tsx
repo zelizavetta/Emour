@@ -1,0 +1,18 @@
+import { StyleSheet, View, ViewProps } from "react-native";
+import { colors } from "@/constants/colors";
+
+export default function Card({ children, style, ...props }: ViewProps) {
+    return(
+        <View style={[styles.container, style]} {...props}>
+            {children}
+        </View>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: {
+        padding: 16,
+        backgroundColor: colors.card.background,
+        borderRadius: 20,
+    }
+});
