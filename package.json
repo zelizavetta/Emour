@@ -1,0 +1,25 @@
+{
+  "name": "emour",
+  "version": "1.0.0",
+  "private": true,
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "web": "expo start --web",
+    "lint": "expo lint",
+    "typecheck": "tsc --noEmit",
+    "reset-project": "node ./scripts/reset-project.js"
+  },
+  "dependencies": {
+    "expo": "~55.0.5",
+    "expo-router": "^55.0.5",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-native": "0.83.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
