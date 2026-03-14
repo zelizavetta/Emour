@@ -27,7 +27,7 @@ export default function Screen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 24,
     color: colors.text
   }
 });

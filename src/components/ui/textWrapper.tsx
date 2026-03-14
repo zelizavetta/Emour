@@ -3,7 +3,7 @@ import { colors } from "@/constants/colors";
 import { fonts } from "@/constants/fonts";
 
 type TextWrapperProps = TextProps & {
-  variant?: "title" | "base" | "description";
+  variant?: "title" | "bigTitle" | "base" | "description";
 };
 
 export default function TextWrapper({
@@ -23,15 +23,24 @@ const styles = StyleSheet.create({
   base: {
     fontFamily: fonts.base,
     color: colors.text,
+    textAlign: "center",
+    marginBottom: 16,
     fontSize: 16
   },
 
   title: {
     fontSize: 20,
-    fontWeight: "600"
+    fontWeight: "500",
+    marginBottom: 24
+  },
+
+  bigTitle: {
+    fontSize: 24,
+    marginBottom: 24
   },
 
   description: {
-    fontSize: 12
+    fontSize: 10,
+    marginBottom: 8
   }
 });

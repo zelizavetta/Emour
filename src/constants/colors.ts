@@ -10,6 +10,8 @@ export const colors = {
   card: {
     background: "#d9d9d905"
   },
-  green: "#B8FB00",
+
+  green: "#0dfb00",
+  orange: "#fbee00",
   danger: "#FB2100"
 };
