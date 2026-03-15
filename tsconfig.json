@@ -17,30 +17,6 @@
     "paths": {
       "@/*": [
         "src/*"
-      ],
-      "@components/*": [
-        "src/components/*"
-      ],
-      "@features/*": [
-        "src/features/*"
-      ],
-      "@config/*": [
-        "src/config/*"
-      ],
-      "@constants/*": [
-        "src/constants/*"
-      ],
-      "@hooks/*": [
-        "src/hooks/*"
-      ],
-      "@services/*": [
-        "src/services/*"
-      ],
-      "@utils/*": [
-        "src/utils/*"
-      ],
-      "@assets/*": [
-        "assets/*"
       ]
     }
   },

@@ -4,9 +4,9 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MainTabs from "./MainTabs";
 // import SessionDetailsScreen from "../screens/SessionDetailsScreen";
 
-import { RootStackParamList } from "./types";
-import { colors } from "src/constants/colors";
-import { fonts } from "src/constants/fonts";
+import { RootStackParamList } from "@/types/navigation";
+import { colors } from "@/constants/colors";
+import { fonts } from "@/constants/fonts";
 
 
 const Stack = createNativeStackNavigator<RootStackParamList>();

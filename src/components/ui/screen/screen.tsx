@@ -1,7 +1,7 @@
 import { View, ViewProps, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { colors } from "src/constants/colors";
-import Header from "src/components/Header";
+import { colors } from "@/constants/colors";
+import Header from "@/components/Header";
 
 export default function Screen({ 
     children,  

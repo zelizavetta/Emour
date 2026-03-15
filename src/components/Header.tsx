@@ -1,5 +1,5 @@
-import { colors } from "@constants/colors";
-import { fonts } from "@constants/fonts";
+import { colors } from "@/constants/colors";
+import { fonts } from "@/constants/fonts";
 import { Image, StyleSheet, Text, View } from "react-native";
 
 
@@ -9,7 +9,7 @@ export default function Header() {
             style={styles.header}
         >
             <Image 
-                source={require("@/assets/logo.jpg")}
+                source={require("@//assets/logo.jpg")}
                 style={{ height: 50, width: 80 }}
             >
             </Image>

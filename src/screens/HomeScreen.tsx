@@ -1,13 +1,13 @@
 import { StyleSheet, Text, View } from "react-native";
 import { LineChart } from "react-native-gifted-charts";
 
-import AnxietySlider from "src/components/AnxietySlieder";
-import EnergySlider from "src/components/EnergySlider";
-import MoodSlider from "src/components/MoodSlider";
-import Card from "src/components/ui/card/card";
-import CarouselWrapper from "src/components/ui/carouselWrapper";
-import Screen from "src/components/ui/screen";
-import TextWrapper from "src/components/ui/textWrapper";
+import AnxietySlider from "@/components/AnxietySlieder";
+import EnergySlider from "@/components/EnergySlider";
+import MoodSlider from "@/components/MoodSlider";
+import Card from "@/components/ui/card/card";
+import CarouselWrapper from "@/components/ui/carouselWrapper";
+import Screen from "@/components/ui/screen";
+import TextWrapper from "@/components/ui/textWrapper";
 
 
 export default function HomeScreen() {
