@@ -1,4 +1,4 @@
-import { useAppFonts } from "@/hooks/useAppFonts";
+import { useAppFonts } from "src/hooks/useAppFonts";
 import RootNavigator from "./src/navigation/RootNavigator";
 
 export default function App() {

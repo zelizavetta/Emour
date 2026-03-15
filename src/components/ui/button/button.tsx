@@ -1,6 +1,6 @@
 import { Pressable, PressableProps, StyleSheet } from "react-native";
-import { colors } from "@/constants/colors";
-import TextWrapper from "@/components/ui/textWrapper";
+import { colors } from "src/constants/colors";
+import TextWrapper from "src/components/ui/textWrapper";
 
 type ButtonProps = PressableProps & {
   variant?: "primary" | "secondary" | "danger";

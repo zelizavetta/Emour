@@ -1,7 +1,6 @@
 import React, { useRef, useState } from "react";
-import { View, Text, Dimensions, StyleSheet, Pressable } from "react-native";
+import { View, Text, StyleSheet, Pressable } from "react-native";
 import Carousel, { TCarouselProps } from "react-native-reanimated-carousel";
-import Button from "@/components/ui/button/button";
 
 
 export default function CarouselWrapper({ data }) {
@@ -19,6 +18,7 @@ export default function CarouselWrapper({ data }) {
         >
             <Carousel
                 loop
+                enabled={false}
                 ref={ref}
                 width={width}
                 height={height}
@@ -31,13 +31,13 @@ export default function CarouselWrapper({ data }) {
                             style={[styles.button, styles.buttonNext]}
                             onPress={() => ref.current?.next()} 
                         >
-                            {">"}
+                            <Text style={styles.buttonText}>{">"}</Text>
                         </Pressable>
                         <Pressable
                             style={[styles.button, styles.buttonPrev]}
                             onPress={() => ref.current?.prev()}
                         >
-                            {"<"}
+                            <Text style={styles.buttonText}>{"<"}</Text>
                         </Pressable>
                     </View>
                 )}
@@ -53,15 +53,17 @@ const styles = StyleSheet.create({
   button: {
     position: "absolute",
     top: "40%",
-    backgroundColor: "inherit",
-    color: "#ffffff70",
-    fontSize: 24,
-    fontWeight: 600
+    backgroundColor: "inherit"
   },
   buttonNext: {
     right: 20
   },
   buttonPrev: {
     left: 20
+  },
+  buttonText: {
+    color: "#ffffff70",
+    fontSize: 24,
+    fontWeight: 600
   }
 });

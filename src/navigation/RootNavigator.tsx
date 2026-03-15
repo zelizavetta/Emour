@@ -5,8 +5,8 @@ import MainTabs from "./MainTabs";
 // import SessionDetailsScreen from "../screens/SessionDetailsScreen";
 
 import { RootStackParamList } from "./types";
-import { colors } from "@/constants/colors";
-import { fonts } from "@/constants/fonts";
+import { colors } from "src/constants/colors";
+import { fonts } from "src/constants/fonts";
 
 
 const Stack = createNativeStackNavigator<RootStackParamList>();

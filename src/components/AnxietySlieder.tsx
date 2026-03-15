@@ -7,7 +7,7 @@ import { colors } from "@constants/colors";
 import Button from "@components/ui/button";
 
 
-export default function MoodSlider() {
+export default function AnxietySlider() {
   const [value, setValue] = useState(3);
 
   const emojiMap: Record<number, string> = {
@@ -21,7 +21,7 @@ export default function MoodSlider() {
   return (
     <View>
       <TextWrapper variant="title">
-          Отметь текущее настроение
+          Отметь текущую тревогу
       </TextWrapper>
       <TextWrapper style={styles.emoji}>{emojiMap[value]}</TextWrapper>
 
@@ -47,8 +47,8 @@ export default function MoodSlider() {
       </View>
 
       <View style={styles.labels}>
-        <TextWrapper style={styles.label}>Ужасно</TextWrapper>
-        <TextWrapper style={styles.label}>Прекрасно</TextWrapper>
+        <TextWrapper style={styles.label}>Очень низкая</TextWrapper>
+        <TextWrapper style={styles.label}>Очень высокая</TextWrapper>
       </View>
       <Button variant="secondary" style={styles.button}>
         Готово

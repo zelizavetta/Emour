@@ -1,5 +1,5 @@
-import { colors } from "@/constants/colors";
-import { fonts } from "@/constants/fonts";
+import { colors } from "@constants/colors";
+import { fonts } from "@constants/fonts";
 import { Image, StyleSheet, Text, View } from "react-native";
 
 
