@@ -1,7 +1,7 @@
 import { View, ViewProps, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { colors } from "mobile/src/constants/colors";
-import Header from "mobile/src/components/Header";
+import { colors } from "@/constants/colors";
+import Header from "@/components/Header";
 
 
 type ScreenProps = ViewProps & {

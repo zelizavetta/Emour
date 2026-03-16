@@ -1,15 +1,15 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 
-import HomeScreen from "mobile/src/screens/HomeScreen";
-import WelcomeScreen from "mobile/src/screens/WelcomeScreen";
+import HomeScreen from "@/screens/HomeScreen";
+import WelcomeScreen from "@/screens/WelcomeScreen";
 // import ActivityScreen from "../screens/ActivityScreen";
 // import JournalScreen from "../screens/JournalScreen";
 // import ProfileScreen from "../screens/ProfileScreen";
 
-import { MainTabParamList } from "mobile/src/types/navigation";
-import { colors } from "mobile/src/constants/colors";
-import { fonts } from "mobile/src/constants/fonts";
+import { MainTabParamList } from "@/types/navigation";
+import { colors } from "@/constants/colors";
+import { fonts } from "@/constants/fonts";
 
 
 const Tab = createBottomTabNavigator<MainTabParamList>();

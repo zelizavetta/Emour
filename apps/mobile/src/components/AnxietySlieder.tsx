@@ -2,9 +2,9 @@ import { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import Slider from "@react-native-community/slider";
 import { LinearGradient } from "expo-linear-gradient";
-import TextWrapper from "mobile/src/components/ui/textWrapper";
-import { colors } from "mobile/src/constants/colors";
-import Button from "mobile/src/components/ui/button";
+import TextWrapper from "@/components/ui/textWrapper";
+import { colors } from "@/constants/colors";
+import Button from "@/components/ui/button";
 
 
 export default function AnxietySlider() {

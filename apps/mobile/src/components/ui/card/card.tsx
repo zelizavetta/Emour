@@ -1,5 +1,5 @@
 import { StyleSheet, View, ViewProps } from "react-native";
-import { colors } from "mobile/src/constants/colors";
+import { colors } from "@/constants/colors";
 
 export default function Card({ children, style, ...props }: ViewProps) {
     return(

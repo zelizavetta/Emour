@@ -1,9 +1,10 @@
-import { getOrCreateInstallationId } from '@/src/storage/installation';
-import { saveAccessToken } from '@/src/storage/tokens';
+import { config } from '@/constants/config';
+import { getOrCreateInstallationId } from '@/services/storage/installation';
+import { saveAccessToken } from '@/services/storage/tokens';
 
-const API_URL = 'http://YOUR_SERVER_IP:3001/api';
 
 export async function authByDevice() {
+  const API_URL = config.apiUrl;
   const installationId = await getOrCreateInstallationId();
 
   const res = await fetch(`${API_URL}/auth/device`, {

@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TextProps } from "react-native";
-import { colors } from "mobile/src/constants/colors";
-import { fonts } from "mobile/src/constants/fonts";
+import { colors } from "@/constants/colors";
+import { fonts } from "@/constants/fonts";
 
 type TextWrapperProps = TextProps & {
   variant?: "title" | "bigTitle" | "base" | "description" | "logo";

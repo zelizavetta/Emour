@@ -1,6 +1,6 @@
-import { colors } from "mobile/src/constants/colors";
+import { colors } from "@/constants/colors";
 import { Image, StyleSheet, View } from "react-native";
-import TextWrapper from "mobile/src/components/ui/textWrapper";
+import TextWrapper from "@/components/ui/textWrapper";
 
 
 export default function Header() {
