@@ -36,12 +36,12 @@ export default function HomeScreen() {
                 
             </CarouselWrapper>
 
-            <Card>
+            {/* <Card>
                 <LineChart 
                     areaChart
                     data={data}
                 />
-            </Card>
+            </Card> */}
             
         </Screen>
     );

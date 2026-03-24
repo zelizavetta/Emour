@@ -3,6 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 import HomeScreen from "@/screens/HomeScreen";
 import WelcomeScreen from "@/screens/WelcomeScreen";
+import StatisticScreen from "@/screens/StatisticsScreen";
 // import ActivityScreen from "../screens/ActivityScreen";
 // import JournalScreen from "../screens/JournalScreen";
 // import ProfileScreen from "../screens/ProfileScreen";
@@ -39,9 +40,14 @@ export default function MainTabs() {
         // options={{ tabBarLabel: "Home" }}
       /> */}
       <Tab.Screen
+        name="Statistic"
+        component={StatisticScreen}
+        // options={{ tabBarLabel: "Home" }}
+      />
+      {/* <Tab.Screen
         name="Welcome"
         component={WelcomeScreen}
-      />
+      /> */}
     </Tab.Navigator>
   );
 }
