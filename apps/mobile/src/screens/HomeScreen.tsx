@@ -8,9 +8,15 @@ import Card from "@/components/ui/card/card";
 import CarouselWrapper from "@/components/ui/carouselWrapper";
 import Screen from "@/components/ui/screen";
 import TextWrapper from "@/components/ui/textWrapper";
+import { useRecords } from "@/providers/RecordsContext";
 
 
 export default function HomeScreen() {
+    const { feelings, addFeelingRecord } = useRecords()
+
+    async function fetchCheckRecords() {
+        
+    }
     return (
         <Screen>
             <TextWrapper variant="bigTitle">
@@ -18,13 +24,13 @@ export default function HomeScreen() {
             </TextWrapper>
             <CarouselWrapper data={
                 [<Card>
-                    <MoodSlider></MoodSlider>
+                    <MoodSlider addFeelingRecord={addFeelingRecord}></MoodSlider>
                 </Card>,
                 <Card>
-                    <EnergySlider></EnergySlider>
+                    <EnergySlider addFeelingRecord={addFeelingRecord}></EnergySlider>
                 </Card>,
                 <Card>
-                    <AnxietySlider></AnxietySlider>
+                    <AnxietySlider addFeelingRecord={addFeelingRecord}></AnxietySlider>
                 </Card>
                 ]
             }>

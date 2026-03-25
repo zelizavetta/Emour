@@ -7,7 +7,7 @@ import { colors } from "@/constants/colors";
 import Button from "@/components/ui/button";
 
 
-export default function MoodSlider() {
+export default function MoodSlider({ addFeelingRecord }) {
   const [value, setValue] = useState(3);
 
   const emojiMap: Record<number, string> = {
@@ -53,7 +53,7 @@ export default function MoodSlider() {
         <TextWrapper variant="description" style={styles.label}>Ужасно</TextWrapper>
         <TextWrapper variant="description" style={styles.label}>Прекрасно</TextWrapper>
       </View>
-      <Button variant="secondary" style={styles.button}>
+      <Button variant="secondary" style={styles.button} onPress={addFeelingRecord('mood', value, '')}>
         Готово
       </Button>
     </View>

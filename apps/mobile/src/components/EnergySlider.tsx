@@ -7,7 +7,7 @@ import { colors } from "@/constants/colors";
 import Button from "@/components/ui/button";
 
 
-export default function EnergySlider() {
+export default function EnergySlider({ addFeelingRecord }) {
   const [value, setValue] = useState(3);
 
   const emojiMap: Record<number, string> = {
@@ -50,7 +50,7 @@ export default function EnergySlider() {
         <TextWrapper style={styles.label}>Очень низкая</TextWrapper>
         <TextWrapper style={styles.label}>Очень высокая</TextWrapper>
       </View>
-      <Button variant="secondary" style={styles.button}>
+      <Button variant="secondary" style={styles.button} onPress={addFeelingRecord('energy', value, '')}>
         Готово
       </Button>
     </View>
