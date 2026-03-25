@@ -3,6 +3,9 @@ dotenv.config({ path: process.cwd() + '/.env' })
 import express from 'express'
 import cors from 'cors'
 import { router as userRoutes } from './routes/users'
+import { router as textRoutes } from './routes/texts'
+import { router as dictionaryRoutes } from './routes/dictionary'
+import { router as grammarRoutes } from './routes/grammar'
 import { errorHandler } from './errorHandler'
 
 

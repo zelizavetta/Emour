@@ -1,3 +1,4 @@
+import Screen from '@/components/ui/screen';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Switch } from 'react-native';
 import { Calendar, CalendarList, Agenda, LocaleConfig } from 'react-native-calendars';
@@ -68,7 +69,7 @@ export default function StatisticScreen() {
     };
 
     return(
-        <View style={styles.container}>
+        <Screen>
             {renderLabel()}
             <List.AccordionGroup>
                 <List.Accordion
@@ -86,9 +87,6 @@ export default function StatisticScreen() {
                             )}
                         />
                     ))}
-                    <List.Item title="Настроение" />
-                    <List.Item title="Тревога" />
-                    <List.Item title="Энергия" />
                 </List.Accordion>
                 {/* <List.Accordion
                     title="Симптомы"
@@ -129,7 +127,7 @@ export default function StatisticScreen() {
                 // Mark specific dates as marked
                 markedDates={markedDates}
             />
-      </View>
+      </Screen>
         
     )
 }

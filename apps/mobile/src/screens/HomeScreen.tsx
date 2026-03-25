@@ -11,11 +11,6 @@ import TextWrapper from "@/components/ui/textWrapper";
 
 
 export default function HomeScreen() {
-    const data = [
-        {value: 15},
-        {value: 25},
-        {value: 18},
-    ]
     return (
         <Screen>
             <TextWrapper variant="bigTitle">
@@ -33,16 +28,7 @@ export default function HomeScreen() {
                 </Card>
                 ]
             }>
-                
-            </CarouselWrapper>
-
-            {/* <Card>
-                <LineChart 
-                    areaChart
-                    data={data}
-                />
-            </Card> */}
-            
+            </CarouselWrapper>            
         </Screen>
     );
 }

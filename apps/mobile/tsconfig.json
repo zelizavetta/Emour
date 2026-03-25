@@ -17,7 +17,8 @@
     "paths": {
       "@/*": [
         "src/*"
-      ]
+      ],
+      "@emour/core/*": ["../../packages/core/dist/*"]
     }
   },
   "include": [

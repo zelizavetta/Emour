@@ -19,30 +19,42 @@ export default function MainTabs() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
+        tabBarStyle: {
+          paddingBottom: 10,
+          paddingTop: 5,
+          height: 80,
+          backgroundColor: "#13121D",
+          borderColor: "#00000000"
+        },
+        tabBarActiveTintColor: colors.primary,  
+        tabBarInactiveTintColor: "#ffff",
         headerShown: false,
         tabBarLabelStyle: {
           fontFamily: fonts?.base
         },
-        // tabBarIcon: ({ color, size, focused }) => {
-        //   let iconName: keyof typeof Ionicons.glyphMap = "ellipse";
+        tabBarIcon: ({ color, size, focused }) => {
+          let iconName: keyof typeof Ionicons.glyphMap = "ellipse";
 
-        //   if (route.name === "Home") {
-        //     iconName = focused ? "home" : "home-outline";
-        //   }
+          if (route.name === "Home") {
+            iconName = focused ? "home" : "home-outline";
+          }
+          if (route.name === "Statistic") {
+            iconName = focused ? "stats-chart" : "stats-chart-outline";
+          }
 
-        //   return <Ionicons name={iconName} size={size} color={color} />;
-        // }
+          return <Ionicons name={iconName} size={size} color={color} />;
+        }
       })}
     >
-      {/* <Tab.Screen
+      <Tab.Screen
         name="Home"
         component={HomeScreen}
-        // options={{ tabBarLabel: "Home" }}
-      /> */}
+        options={{ tabBarLabel: "Home" }}
+      />
       <Tab.Screen
         name="Statistic"
         component={StatisticScreen}
-        // options={{ tabBarLabel: "Home" }}
+        options={{ tabBarLabel: "Statistic" }}
       />
       {/* <Tab.Screen
         name="Welcome"

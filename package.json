@@ -3,10 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "build:core": "cd packages/core && npm run build",
+    "install:core:backend": "cd apps/backend && npm install",
+    "install:core:mobile": "cd apps/mobile && npm install",
+    "install:core": "npm run install:core:backend && npm run install:core:mobile",
+    "atach": "adb kill-server && adb start-server && adb devices && adb reverse tcp:8081 tcp:8081",
     "mobile": "cd apps/mobile && expo start -c",
     "prebuild": "cd apps/mobile && npx expo prebuild",
     "build": "cd apps/mobile/android && gradlew.bat assembleRelease",
-    "atach": "adb kill-server && adb start-server && adb devices && adb reverse tcp:8081 tcp:8081",
     "backend": "cd backend && npm run dev"
   }
 }

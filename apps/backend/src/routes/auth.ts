@@ -3,6 +3,7 @@ import { db } from "../db";
 import { signAccessToken } from "../utils/jwt";
 import { AuthRequest, requireAuth } from "../middleware/requireAuth";
 
+
 const router = Router();
 
 type DeviceAuthBody = {

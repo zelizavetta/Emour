@@ -20,8 +20,11 @@ export default function MoodSlider() {
 
   return (
     <View>
-      <TextWrapper variant="title">
-          Отметь текущее настроение
+      <TextWrapper variant="title" style={styles.title}>
+          Отметить настроение
+      </TextWrapper>
+      <TextWrapper variant="description">
+        Последний раз настроение было: <span style={styles.highlight}>4</span>
       </TextWrapper>
       <TextWrapper style={styles.emoji}>{emojiMap[value]}</TextWrapper>
 
@@ -47,8 +50,8 @@ export default function MoodSlider() {
       </View>
 
       <View style={styles.labels}>
-        <TextWrapper style={styles.label}>Ужасно</TextWrapper>
-        <TextWrapper style={styles.label}>Прекрасно</TextWrapper>
+        <TextWrapper variant="description" style={styles.label}>Ужасно</TextWrapper>
+        <TextWrapper variant="description" style={styles.label}>Прекрасно</TextWrapper>
       </View>
       <Button variant="secondary" style={styles.button}>
         Готово
@@ -58,6 +61,9 @@ export default function MoodSlider() {
 }
 
 const styles = StyleSheet.create({
+  title: {
+    marginBottom: 8
+  },
   sliderWrapper: {
     height: 24,
     justifyContent: "center",
@@ -81,11 +87,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
-
   label: {
     marginBottom: 0
   },
-
   emoji: {
     fontSize: 64,
     alignSelf: "center",
@@ -94,5 +98,9 @@ const styles = StyleSheet.create({
   button: {
     alignSelf: "center",
     marginTop: 16
+  },
+  highlight: {
+    fontWeight: 600,
+    color: colors.green
   }
 });
