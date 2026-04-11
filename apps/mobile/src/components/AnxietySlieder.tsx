@@ -13,11 +13,11 @@ export default function AnxietySlider({ addFeelingRecord, feelings } : any) {
   const time = new Date().toISOString()
 
   const emojiMap: Record<number, string> = {
-    1: "😩",
-    2: "🫤",
+    1: "🥳",
+    2: "😄",
     3: "🙂",
-    4: "😄",
-    5: "🥳",
+    4: "🫤",
+    5: "😩",
   };
 
   return (

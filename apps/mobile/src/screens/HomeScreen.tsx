@@ -1,5 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import { LineChart } from "react-native-gifted-charts";
+import { RadioButton, List, Checkbox } from "react-native-paper";
+import { useEffect, useState } from "react";
 
 import AnxietySlider from "@/components/AnxietySlieder";
 import EnergySlider from "@/components/EnergySlider";
@@ -9,8 +11,8 @@ import CarouselWrapper from "@/components/ui/carouselWrapper";
 import Screen from "@/components/ui/screen";
 import TextWrapper from "@/components/ui/textWrapper";
 import { useFeelings } from "@/providers/UserContext";
-import { useEffect, useState } from "react";
 import { Feeling } from "@emour/core";
+import { colors } from "@/constants/colors";
 
 
 export default function HomeScreen() {
@@ -18,6 +20,8 @@ export default function HomeScreen() {
     const [moodRecords, setMoodRecords] = useState<Feeling[]>([])
     const [energyRecords, setEnergyRecords] = useState<Feeling[]>([])
     const [anxietyRecords, setAnxietyRecords] = useState<Feeling[]>([])
+    const [symptoms, setSymptoms] = useState<string[]>([])
+    const [haveSymptoms, setHaveSymptoms] = useState<boolean>()
     // console.log('feelings: ', feelings)
     useEffect(() => {
         if (feelings.length === 0) {
@@ -33,6 +37,16 @@ export default function HomeScreen() {
         setAnxietyRecords(anxietyItems)
     }, [feelings]);
 
+    const symptomsItems = [
+        "Тремор",
+        "Спутанные мысли",
+        "Суицидальные мысли",
+        "Апатия",
+        "Странные идеи",
+        "Раздражительность",
+        "Неусидчивость",
+        "Галлюцинации"
+    ]
 
     return (
         <Screen>
@@ -51,7 +65,53 @@ export default function HomeScreen() {
                 </Card>,
                 ]
             }>
-            </CarouselWrapper>            
+            </CarouselWrapper>  
+            <Card>
+                <TextWrapper variant="title">
+                    Есть сегодня симптомы?
+                </TextWrapper>
+                <View style={styles.symptompsOptionsContainer}>
+                    <View style={styles.symptompsOptions}>
+                        <RadioButton 
+                            value='Нет'
+                            color={colors.primary}
+                            status={haveSymptoms ? 'unchecked' : 'checked'} 
+                            onPress={() => {setHaveSymptoms(false); setSymptoms([])}}
+                        />
+                        <TextWrapper>
+                            Нет
+                        </TextWrapper>
+                    </View>
+                    <View style={styles.symptompsOptions}>
+                        <RadioButton 
+                            value="Да" 
+                            color={colors.primary}
+                            status={haveSymptoms ? 'checked' : 'unchecked'} 
+                            onPress={() => setHaveSymptoms(true)}
+                        />
+                        <TextWrapper>
+                            Да
+                        </TextWrapper>
+                    </View>
+                    {symptomsItems.map(item => (
+                        <View style={styles.symptomsList}>
+                            <Checkbox
+                                key={item}
+                                disabled={!haveSymptoms}
+                                onPress={() => 
+                                    symptoms.findIndex(sym => sym === item) === -1 ? 
+                                    setSymptoms(prev => [...prev, item]) :
+                                    setSymptoms(prev => prev.filter(p => p !== item))
+                                }
+                                status={symptoms.findIndex(sym => sym === item) === -1 ? "unchecked" : "checked"} 
+                            />
+                            <TextWrapper>
+                                {item}
+                            </TextWrapper>
+                        </View>
+                    ))}
+                </View>
+            </Card>          
         </Screen>
     );
 }
@@ -62,5 +122,24 @@ const styles = StyleSheet.create({
         height: 120,
         justifyContent: "center",
         alignItems: "center"
+    },
+    symptompsOptionsContainer: {
+        display: "flex",
+        flexDirection: "column",
+        gap: 8,
+        height: 300,
+        overflow: "scroll"
+    },
+    symptompsOptions: {
+        display: "flex",
+        flexDirection: "row",
+        gap: 4,
+        alignItems: "center"
+    },
+    symptomsList: {
+        display: "flex", 
+        flexDirection: "row",
+        gap: 4, 
+        alignItems: "center",
     }
 })

@@ -1,4 +1,4 @@
-import { PopupWindow } from '@/components/popupWindow';
+import { PopupWindow } from '@/components/ui/popupWindow';
 import Screen from '@/components/ui/screen';
 import TextWrapper from '@/components/ui/textWrapper';
 import { useFeelings } from '@/providers/UserContext';

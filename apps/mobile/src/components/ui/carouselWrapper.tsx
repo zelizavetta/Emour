@@ -6,7 +6,7 @@ import Carousel, { TCarouselProps } from "react-native-reanimated-carousel";
 export default function CarouselWrapper({ data }) {
     const ref = useRef(null);
     const [width, setWidth] = useState(500);
-    const [height, setHeight] = useState(500);
+    const [height, setHeight] = useState(280);
 
     return (
         <View 
@@ -48,7 +48,9 @@ export default function CarouselWrapper({ data }) {
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%"
+    width: "100%",
+    height: "auto",
+    minHeight: 280
   },
   button: {
     position: "absolute",

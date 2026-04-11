@@ -33,7 +33,11 @@ export default function Screen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    gap: 16,
     padding: 24,
-    color: colors.text
+    color: colors.text,
+    overflow: "scroll"
   }
 });
