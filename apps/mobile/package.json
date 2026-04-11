@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "expo start -c",
+    "start": "npx expo start",
     "prebuild": "npx expo prebuild",
     "build": "eas build --platform android --profile preview --local",
     "android": "expo run:android",
@@ -14,7 +14,7 @@
     "reset-project": "node ./scripts/reset-project.js"
   },
   "dependencies": {
-    "@emour/core": "file:../../packages/core",
+    "@emour/core": "file:../../packages/core/emour-core-1.0.0.tgz",
     "@react-native-community/slider": "5.0.1",
     "@react-navigation/bottom-tabs": "^7.15.5",
     "@react-navigation/native": "^7.1.33",
@@ -49,7 +49,9 @@
     "uuid": "^13.0.0"
   },
   "devDependencies": {
+    "@types/node": "^25.6.0",
     "@types/react": "~19.1.10",
+    "@types/react-native": "^0.72.8",
     "babel-plugin-module-resolver": "^5.0.2",
     "typescript": "^5.9.3"
   }

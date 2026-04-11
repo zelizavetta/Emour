@@ -1,4 +1,3 @@
-import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import MainTabs from "./MainTabs";
@@ -7,21 +6,14 @@ import MainTabs from "./MainTabs";
 import { RootStackParamList } from "@/types/navigation";
 import { colors } from "@/constants/colors";
 import { fonts } from "@/constants/fonts";
+import { UserProvider } from "@/providers/UserContext";
 
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-const navigationTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    text: colors.text
-  },
-};
-
 export default function RootNavigator() {
   return (
-    <NavigationContainer theme={navigationTheme}>
+    <UserProvider>
       <Stack.Navigator
         screenOptions={{
           headerTintColor: colors.text,
@@ -36,6 +28,6 @@ export default function RootNavigator() {
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
-    </NavigationContainer>
+    </UserProvider>
   );
 }

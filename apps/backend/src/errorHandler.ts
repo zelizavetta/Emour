@@ -1,38 +1,25 @@
-import type { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { ApiError } from "./errors/ApiError";
-import { mapPostgresError } from "./errors/postgres";
+import { ApiErrorResponse, ERROR_CODES } from "@emour/core";
 
-export function errorHandler(err: any, req: Request, res: Response, _next: NextFunction) {
-  // Лог
-  console.error("ERROR:", {
-    method: req.method,
-    path: req.path,
-    message: err?.message,
-    code: err?.code,
-    stack: err?.stack,
-  });
-
-  // Если это ошибка Postgres — маппим
-  const pgMapped = mapPostgresError(err);
-  if (pgMapped) {
-    return res.status(pgMapped.status).json({
-      error: pgMapped.code,
-      message: pgMapped.message,
-    });
-  }
-
-  // Если это ApiError
+export function errorHandler(
+  err: unknown,
+  _req: Request,
+  res: Response<ApiErrorResponse>,
+  _next: NextFunction
+) {
   if (err instanceof ApiError) {
     return res.status(err.status).json({
-      error: err.code,
+      code: err.code,
       message: err.message,
-      ...(process.env.NODE_ENV !== "production" && err.details ? { details: err.details } : {}),
+      details: err.details,
     });
   }
 
-  // Фолбек
+  console.error(err);
+
   return res.status(500).json({
-    error: "INTERNAL_ERROR",
+    code: ERROR_CODES.INTERNAL_ERROR,
     message: "Internal server error",
   });
 }

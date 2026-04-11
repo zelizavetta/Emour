@@ -1,6 +1,4 @@
-export type FeelingType = {
-    feelingType: 'mood' | 'anxiety' | 'energy'
-}
+export type FeelingType = 'mood' | 'anxiety' | 'energy'
 
 export interface CreateFeelingRecordReq {
     feelingType: FeelingType
@@ -8,9 +6,7 @@ export interface CreateFeelingRecordReq {
     createdAtClient: string
 }
 
-export type DayPart = {
-    dayPart: 'night' | 'morning' | 'afternoon' | 'evening'
-}
+export type DayPart = 'night' | 'morning' | 'afternoon' | 'evening'
 
 export interface CreateFeelingRecordRes {
     id: number
@@ -27,7 +23,7 @@ export interface Feeling {
     dayPart: DayPart
 }
 
-export interface RecordsContextType {
+export interface UserContextType {
     feelings: Feeling[],
-    addFeelingRecord: ({ feelingType, score, createdAtClient }: CreateFeelingRecordReq) => Promise<Feeling | null>
+    addFeelingRecord: (feelingType: FeelingType, score: number, createdAtClient: string) => Promise<Feeling | null>
 }

@@ -13,12 +13,11 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "skipLibCheck": true,
-    "baseUrl": ".",
+    // "baseUrl": ".",
     "paths": {
       "@/*": [
-        "src/*"
-      ],
-      "@emour/core/*": ["../../packages/core/dist/*"]
+        "./src/*"
+      ]
     }
   },
   "include": [

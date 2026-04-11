@@ -5,10 +5,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import TextWrapper from "@/components/ui/textWrapper";
 import { colors } from "@/constants/colors";
 import Button from "@/components/ui/button";
+import { useFeelings } from "@/providers/UserContext";
 
 
-export default function AnxietySlider({ addFeelingRecord }) {
+export default function AnxietySlider({ addFeelingRecord, feelings } : any) {
   const [value, setValue] = useState(3);
+  const time = new Date().toISOString()
 
   const emojiMap: Record<number, string> = {
     1: "😩",
@@ -23,11 +25,14 @@ export default function AnxietySlider({ addFeelingRecord }) {
       <TextWrapper variant="title">
           Отметь текущую тревогу
       </TextWrapper>
+      <TextWrapper variant="description">
+        Последний раз тревога была: {feelings.length === 0 ? "-" : feelings[0].score}
+      </TextWrapper>
       <TextWrapper style={styles.emoji}>{emojiMap[value]}</TextWrapper>
 
       <View style={styles.sliderWrapper}>
         <LinearGradient
-          colors={[colors.danger, colors.orange, colors.green]}
+          colors={[colors.green, colors.orange, colors.danger]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.gradient}
@@ -50,8 +55,10 @@ export default function AnxietySlider({ addFeelingRecord }) {
         <TextWrapper style={styles.label}>Очень низкая</TextWrapper>
         <TextWrapper style={styles.label}>Очень высокая</TextWrapper>
       </View>
-      <Button variant="secondary" style={styles.button} onPress={addFeelingRecord('anxiety', value, '')}>
-        Готово
+      <Button variant="secondary" style={styles.button} onPress={() => addFeelingRecord('anxiety', value, time)}>
+        <TextWrapper>
+          Готово
+        </TextWrapper>
       </Button>
     </View>
   );

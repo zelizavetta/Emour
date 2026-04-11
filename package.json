@@ -3,14 +3,15 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build:core": "cd packages/core && npm run build",
-    "install:core:backend": "cd apps/backend && npm install",
-    "install:core:mobile": "cd apps/mobile && npm install",
+    "build:core": "cd packages/core && npm run build && npm pack",
+    "install:core:backend": "cd apps/backend && npm install ../../packages/core/emour-core-1.0.0.tgz",
+    "install:core:mobile": "cd apps/mobile && npm install ../../packages/core/emour-core-1.0.0.tgz",
     "install:core": "npm run install:core:backend && npm run install:core:mobile",
+    "build:api": "cd apps/backend && npm install && npm run build",
     "atach": "adb kill-server && adb start-server && adb devices && adb reverse tcp:8081 tcp:8081",
-    "mobile": "cd apps/mobile && expo start -c",
-    "prebuild": "cd apps/mobile && npx expo prebuild",
+    "mobile": "cd apps/mobile && npm run start",
+    "prebuild": "cd apps/mobile && npm run prebuild",
     "build": "cd apps/mobile/android && gradlew.bat assembleRelease",
-    "backend": "cd backend && npm run dev"
+    "backend": "cd apps/backend && npm run dev"
   }
 }

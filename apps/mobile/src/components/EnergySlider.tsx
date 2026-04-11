@@ -5,10 +5,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import TextWrapper from "@/components/ui/textWrapper";
 import { colors } from "@/constants/colors";
 import Button from "@/components/ui/button";
+import { useFeelings } from "@/providers/UserContext";
 
 
-export default function EnergySlider({ addFeelingRecord }) {
+export default function EnergySlider({ addFeelingRecord, feelings } : any) {
   const [value, setValue] = useState(3);
+  const time = new Date().toISOString()
 
   const emojiMap: Record<number, string> = {
     1: "😩",
@@ -22,6 +24,9 @@ export default function EnergySlider({ addFeelingRecord }) {
     <View>
       <TextWrapper variant="title">
           Отметь текущую энергию
+      </TextWrapper>
+      <TextWrapper variant="description">
+        Последний раз энергия была: {feelings.length === 0 ? "-" : feelings[0].score}
       </TextWrapper>
       <TextWrapper style={styles.emoji}>{emojiMap[value]}</TextWrapper>
 
@@ -50,8 +55,10 @@ export default function EnergySlider({ addFeelingRecord }) {
         <TextWrapper style={styles.label}>Очень низкая</TextWrapper>
         <TextWrapper style={styles.label}>Очень высокая</TextWrapper>
       </View>
-      <Button variant="secondary" style={styles.button} onPress={addFeelingRecord('energy', value, '')}>
-        Готово
+      <Button variant="secondary" style={styles.button} onPress={() => addFeelingRecord('energy', value, time)}>
+        <TextWrapper>
+          Готово
+        </TextWrapper>
       </Button>
     </View>
   );

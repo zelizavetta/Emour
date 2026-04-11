@@ -2,10 +2,7 @@ import dotenv from 'dotenv'
 dotenv.config({ path: process.cwd() + '/.env' })
 import express from 'express'
 import cors from 'cors'
-import { router as userRoutes } from './routes/users'
-import { router as textRoutes } from './routes/texts'
-import { router as dictionaryRoutes } from './routes/dictionary'
-import { router as grammarRoutes } from './routes/grammar'
+import { router as feelingsRoutes } from './routes/feelings'
 import { errorHandler } from './errorHandler'
 
 
@@ -17,7 +14,6 @@ app.use((req, _res, next) => {
   next()
 })
 
-
 app.use(cors({
   origin: process.env.CORS_ORIGIN,
   credentials: true
@@ -27,19 +23,16 @@ app.get('/', (req, res) => {
   res.send({ status: 'ok' })
 })
 
-app.use('/api/auth', userRoutes)
-app.use('/api/texts', textRoutes)
-app.use('/api/dictionary', dictionaryRoutes)
-app.use('/api/grammar', grammarRoutes)
+app.use('/api/feelings', feelingsRoutes)
 
 app.use(errorHandler);
 
-// const PORT = process.env.PORT || 3001
+// const PORT = process.env.PORT || 3002
 // app.listen(PORT, () => {
 //   console.log(`API running on ${process.env.API_URL}:${PORT}`)
 // })
 
-const PORT = 3001
+const PORT = 3002
 
 const server = app.listen(PORT, '0.0.0.0')
 

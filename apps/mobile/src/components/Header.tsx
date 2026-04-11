@@ -25,13 +25,15 @@ const styles = StyleSheet.create({
         backgroundColor: colors.background,
         display: "flex",
         flexDirection: "row",
-        gap: "20px",
+        gap: 20,
         width: "100%",
-        height: 80,
+        paddingTop: 60,
+        height: 120,
         paddingHorizontal: 20,
         alignItems: "center"
     },
     logo: {
-        marginBottom: 0
+        margin: 0,
+        padding: 0,
     }
 })

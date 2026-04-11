@@ -1,14 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import Slider from "@react-native-community/slider";
 import { LinearGradient } from "expo-linear-gradient";
 import TextWrapper from "@/components/ui/textWrapper";
 import { colors } from "@/constants/colors";
 import Button from "@/components/ui/button";
+import { useFeelings } from "@/providers/UserContext";
+import { FeelingType } from "@emour/core";
 
-
-export default function MoodSlider({ addFeelingRecord }) {
+export default function MoodSlider({ addFeelingRecord, feelings } : any) {
   const [value, setValue] = useState(3);
+  function nowLocal() {
+    const now = new Date();
+
+    const pad = (n: number) => String(n).padStart(2, '0');
+
+    return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ` +
+          `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+  }
+  // console.log('feelings: ', feelings)
+  const time = nowLocal()
 
   const emojiMap: Record<number, string> = {
     1: "😩",
@@ -24,7 +35,7 @@ export default function MoodSlider({ addFeelingRecord }) {
           Отметить настроение
       </TextWrapper>
       <TextWrapper variant="description">
-        Последний раз настроение было: <span style={styles.highlight}>4</span>
+        Последний раз настроение было: {feelings.length === 0 ? "-" : feelings[0].score}
       </TextWrapper>
       <TextWrapper style={styles.emoji}>{emojiMap[value]}</TextWrapper>
 
@@ -53,8 +64,10 @@ export default function MoodSlider({ addFeelingRecord }) {
         <TextWrapper variant="description" style={styles.label}>Ужасно</TextWrapper>
         <TextWrapper variant="description" style={styles.label}>Прекрасно</TextWrapper>
       </View>
-      <Button variant="secondary" style={styles.button} onPress={addFeelingRecord('mood', value, '')}>
-        Готово
+      <Button variant="secondary" style={styles.button} onPress={() => addFeelingRecord('mood', value, time)}>
+        <TextWrapper>
+          Готово
+        </TextWrapper>
       </Button>
     </View>
   );

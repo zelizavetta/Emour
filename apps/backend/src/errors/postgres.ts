@@ -1,25 +1,68 @@
 import { ApiError } from "./ApiError";
+import { FIELD_ERRORS } from "@emour/core";
 
-// 23505 unique_violation
-// 23503 foreign_key_violation
-// 22P02 invalid_text_representation
-// 23502 not_null_violation
+type PgErrorLike = {
+  code?: string;
+  column?: string;
+  constraint?: string;
+};
 
-export function mapPostgresError(err: any): ApiError | null {
+export function mapPostgresError(err: unknown): ApiError | null {
   if (!err || typeof err !== "object") return null;
-  const code = err.code as string | undefined;
+
+  const pgError = err as PgErrorLike;
+  const code = pgError.code;
   if (!code) return null;
 
   switch (code) {
-    case "23505":
-      return ApiError.conflict("DUPLICATE", "Already exists");
+    case "23505": {
+      const field = parseUniqueConstraint(pgError.constraint);
+
+      return ApiError.conflict("Already exists", {
+        fields: field
+          ? {
+              [field]: {
+                code: FIELD_ERRORS.ALREADY_EXISTS,
+              },
+            }
+          : undefined,
+      });
+    }
+
     case "23503":
-      return ApiError.conflict("FK_VIOLATION", "Cannot delete/update due to related records");
+      return ApiError.conflict("Foreign key violation", {
+        reason: "FK_CONSTRAINT",
+      });
+
     case "23502":
-      return ApiError.badRequest("NOT_NULL_VIOLATION", "Missing required field");
+      return ApiError.validation("Validation failed", {
+        fields: {
+          [pgError.column ?? "unknown"]: {
+            code: FIELD_ERRORS.REQUIRED,
+          },
+        },
+      });
+
     case "22P02":
-      return ApiError.badRequest("INVALID_FORMAT", "Invalid id/format");
+      return ApiError.validation("Validation failed", {
+        fields: {
+          id: {
+            code: FIELD_ERRORS.INVALID,
+            message: "Invalid id format",
+          },
+        },
+      });
+
     default:
-      return ApiError.internal("Database error");
+      return ApiError.internal("Database error", {
+        pgCode: code,
+      });
   }
+}
+
+function parseUniqueConstraint(constraint?: string): string | null {
+  if (!constraint) return null;
+
+  const match = constraint.match(/^[^_]+_(.+?)_key$/);
+  return match?.[1] ?? null;
 }

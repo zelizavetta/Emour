@@ -9,8 +9,5 @@
     "forceConsistentCasingInFileNames": true,
     "typeRoots": ["./src/types", "./node_modules/@types"],
     "resolveJsonModule": true,
-    "paths": {
-      "@emour/core/*": ["../../packages/core/dist/*"]
-    }
   }
 }
