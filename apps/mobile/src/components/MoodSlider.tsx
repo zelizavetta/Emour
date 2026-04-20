@@ -65,9 +65,7 @@ export default function MoodSlider({ addFeelingRecord, feelings } : any) {
         <TextWrapper variant="description" style={styles.label}>Прекрасно</TextWrapper>
       </View>
       <Button variant="secondary" style={styles.button} onPress={() => addFeelingRecord('mood', value, time)}>
-        <TextWrapper>
-          Готово
-        </TextWrapper>
+        Готово
       </Button>
     </View>
   );

@@ -1,4 +1,4 @@
-import { View, ViewProps, StyleSheet } from "react-native";
+import { View, ViewProps, StyleSheet, ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { colors } from "@/constants/colors";
 import Header from "@/components/Header";
@@ -17,27 +17,31 @@ export default function Screen({
   return(
     <LinearGradient
       colors={colors.gradients.background}
-      style={{ flex: 1 }}
+      style={styles.wrapper}
     >
       {hasHeader ? <Header></Header> : <></>}
-      <View 
-        style={[styles.container, style]}
+      <ScrollView 
+        contentContainerStyle={[styles.container, styles.scrollContent, style]}
+        showsVerticalScrollIndicator={false}
         {...props}
       >
         {children}
-      </View>
+      </ScrollView>
     </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  wrapper: {
     flex: 1,
-    display: "flex",
-    flexDirection: "column",
+  },
+  container: {
+    flexGrow: 1,
     gap: 16,
     padding: 24,
-    color: colors.text,
-    overflow: "scroll"
-  }
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 20,
+  },
 });

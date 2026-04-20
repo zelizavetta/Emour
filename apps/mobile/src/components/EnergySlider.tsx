@@ -56,9 +56,7 @@ export default function EnergySlider({ addFeelingRecord, feelings } : any) {
         <TextWrapper style={styles.label}>Очень высокая</TextWrapper>
       </View>
       <Button variant="secondary" style={styles.button} onPress={() => addFeelingRecord('energy', value, time)}>
-        <TextWrapper>
-          Готово
-        </TextWrapper>
+        Готово
       </Button>
     </View>
   );

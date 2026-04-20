@@ -1,3 +1,5 @@
+import { DayPart } from "./common.js"
+
 export type FeelingType = 'mood' | 'anxiety' | 'energy'
 
 export interface CreateFeelingRecordReq {
@@ -5,8 +7,6 @@ export interface CreateFeelingRecordReq {
     score: number
     createdAtClient: string
 }
-
-export type DayPart = 'night' | 'morning' | 'afternoon' | 'evening'
 
 export interface CreateFeelingRecordRes {
     id: number
@@ -21,9 +21,4 @@ export interface Feeling {
     createdAtServer: string
     createdAtClient: string
     dayPart: DayPart
-}
-
-export interface UserContextType {
-    feelings: Feeling[],
-    addFeelingRecord: (feelingType: FeelingType, score: number, createdAtClient: string) => Promise<Feeling | null>
 }

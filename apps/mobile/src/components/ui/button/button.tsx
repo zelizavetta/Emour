@@ -1,26 +1,35 @@
-import { Pressable, PressableProps, StyleSheet } from "react-native";
+import { Pressable, PressableProps, StyleProp, StyleSheet, ViewStyle } from "react-native";
 import { colors } from "@/constants/colors";
 import TextWrapper from "@/components/ui/textWrapper";
+import { ReactNode } from "react";
 
 type ButtonProps = PressableProps & {
   variant?: "primary" | "secondary" | "danger";
+  disabled?: boolean;
+  style?: StyleProp<ViewStyle>;
+  children: ReactNode;
 }
 
 export default function Button({
     children,
     variant = "primary",
+    disabled,
     style,
     ...props
   }: ButtonProps) {
 
   return (
     <Pressable
-      style={[
+      disabled={disabled}
+      style={({ pressed }) => [
         styles.button,
         { 
           backgroundColor: variantColors[variant],
           shadowColor: variantColors[variant]
-        }, style
+        },
+        pressed && !disabled && styles.pressed,
+        disabled && styles.disabled,
+        style
       ]}
       {...props}
     >
@@ -45,6 +54,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     elevation: 12,
     alignSelf: "flex-start"
+  },
+  pressed: {
+    opacity: 0.7,
+  },
+  disabled: {
+    opacity: 0.3,
   },
   text: {
     marginBottom: 0

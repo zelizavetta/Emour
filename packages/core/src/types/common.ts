@@ -1,0 +1,1 @@
+export type DayPart = 'night' | 'morning' | 'afternoon' | 'evening'
