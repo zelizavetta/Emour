@@ -5,21 +5,10 @@ import { LinearGradient } from "expo-linear-gradient";
 import TextWrapper from "@/components/ui/textWrapper";
 import { colors } from "@/constants/colors";
 import Button from "@/components/ui/button";
-import { useFeelings } from "@/providers/UserContext";
-import { FeelingType } from "@emour/core";
+
 
 export default function MoodSlider({ addFeelingRecord, feelings } : any) {
   const [value, setValue] = useState(3);
-  function nowLocal() {
-    const now = new Date();
-
-    const pad = (n: number) => String(n).padStart(2, '0');
-
-    return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ` +
-          `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
-  }
-  // console.log('feelings: ', feelings)
-  const time = nowLocal()
 
   const emojiMap: Record<number, string> = {
     1: "😩",
@@ -64,7 +53,7 @@ export default function MoodSlider({ addFeelingRecord, feelings } : any) {
         <TextWrapper variant="description" style={styles.label}>Ужасно</TextWrapper>
         <TextWrapper variant="description" style={styles.label}>Прекрасно</TextWrapper>
       </View>
-      <Button variant="secondary" style={styles.button} onPress={() => addFeelingRecord('mood', value, time)}>
+      <Button variant="secondary" style={styles.button} onPress={() => {addFeelingRecord('mood', value); setValue(3)}}>
         Готово
       </Button>
     </View>

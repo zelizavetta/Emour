@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Switch } from 'react-native';
+import { StyleSheet, Text, View, Switch, ScrollView } from 'react-native';
 import { Calendar, CalendarList, Agenda, LocaleConfig } from 'react-native-calendars';
 import { List, Checkbox } from 'react-native-paper';
 
@@ -7,8 +7,11 @@ import { PopupWindow } from '@/components/ui/popupWindow';
 import Screen from '@/components/ui/screen';
 import TextWrapper from '@/components/ui/textWrapper';
 import { useUserRecords } from '@/providers/UserContext';
-import { Feeling } from '@emour/core';
+import { Feeling, Symptom, DayPart } from '@emour/core';
 import { dayPartMap, dropDownData, feelingItems, symptomItems } from '@/constants/data';
+import { formatDateTime, nowLocalTime } from '@/utils/time';
+import { colors } from '@/constants/colors';
+import Card from '@/components/ui/card/card';
 
 
 export default function StatisticScreen() {
@@ -25,51 +28,68 @@ export default function StatisticScreen() {
     const [energyRecords, setEnergyRecords] = useState([])
     const [anxietyRecords, setAnxietyRecords] = useState([])
     const [data, setData] = useState<StatisticDataItem[]>([])
+    const [dataFeelings, setDataFeelings] = useState<StatisticDataItem[]>([])
+    const [dataSymptoms, setDataSymptoms] = useState<StatisticDataItem[]>([])
     const { feelings, symptoms, addFeelingRecord } = useUserRecords()
-    const currentDate = new Date().toISOString().slice(0, 10)
+
+    type StatisticFeelingItem = {
+        value: string;
+        dayPart: DayPart;
+        score: number;
+    };
+
+    type StatisticSymptomItem = {
+        value: string;
+        dayPart: DayPart;
+    };
 
     type StatisticDataItem = {
-        date: string,
-        value: any[]
-    }
-    function transform(data: Feeling[]) : StatisticDataItem[]{
-        const map = data.reduce<Record<string, any>>((acc, feel) => {
-            const day = new Date(feel.createdAtClient).toISOString().slice(0, 10);
+        date: string;
+        feelings: StatisticFeelingItem[];
+        symptoms: StatisticSymptomItem[];
+    };
+
+    function transform(data: Array<Feeling | Symptom>) : StatisticDataItem[]{
+        const map = data.reduce<Record<string, Omit<StatisticDataItem, "date">>>((acc, record) => {
+            const day = formatDateTime(record.createdAtClient, record.clientTimezone).slice(0, 10)
             if (!acc[day]) {
-                acc[day] = [];
+                acc[day] = {
+                    feelings: [],
+                    symptoms: [],
+                };
             }
             console.log('acc[day]', acc[day])
-            const matched = feelingItems.filter(item => item.expression(feel.score) && item.value.split("-")[0] === feel.feelingType)
-            if (matched.length !== 0) {
-                acc[day].push({value: matched[0].value, dayPart: feel.dayPart, score: feel.score})
+            switch (record.type) {
+                case 'feeling': {
+                    const matchedFeelings = feelingItems.filter(item => item.expression(record.score) && item.value.split("-")[0] === record.feelingType)
+                    if (matchedFeelings.length !== 0 && acc[day].feelings.findIndex(feeling => feeling.value === matchedFeelings[0].value) === -1) {
+                        acc[day].feelings.push({value: matchedFeelings[0].value, dayPart: record.dayPart, score: record.score})
+                    }
+                    break
+                }
+                case 'symptom': {
+                    const matchedSymptom = symptomItems.filter(item => item.value === record.symptomType)
+                    if (matchedSymptom.length !== 0 && acc[day].symptoms.findIndex(symptom => symptom.value === matchedSymptom[0].value) === -1) {
+                        acc[day].symptoms.push({value: matchedSymptom[0].value, dayPart: record.dayPart})
+                    }
+                    break
+                }
             }
-            // const matched = items.filter(item => item.expression(feel.score) && item.value.split("-")[0] === feel.feelingType)
-            // matched.map(item => {
-            //     if (acc[day].findIndex(v => v.value === item.value) === -1) {
-            //         acc[day].push({value: item.value, time: })
-            //     }
-            // })
             return acc;
         }, {});
 
         return Object.entries(map).map(([date, value]) => ({
             date,
-            value,
+            feelings: value.feelings,
+            symptoms: value.symptoms
         }));
     }
 
     useEffect(() => {
-        if (feelings.length === 0) {
-            return
-        }
-        const dataItems = transform(feelings)
+        const records = [...feelings, ...symptoms]
+        const dataItems = transform(records)
         setData(dataItems)
-    }, [feelings]);
-
-    useEffect(() => {
-        if (symptoms.length === 0) return
-
-    }, [symptoms])
+    }, [feelings, symptoms]);
 
     // const data = [
     //     { date: '2026-03-24', value: ['1', '2', '5'] },
@@ -79,12 +99,10 @@ export default function StatisticScreen() {
     // ]
 
     const activeValues = Object.keys(checked).filter(k => checked[k]);
+    // const data = [...dataFeelings, ...dataSymptoms]
     const filteredData = activeValues.length ? data.filter(item =>
-        activeValues.every(val => item.value.map(v => v.value).includes(val))
+        activeValues.every(val => [...item.feelings.map(v => v.value), ...item.symptoms.map(v => v.value)].includes(val))
     ) : [];
-
-    console.log('activeValues: ', activeValues)
-    console.log('filteredData: ', filteredData)
 
     type MarkedDates = Record<
         string,
@@ -98,7 +116,7 @@ export default function StatisticScreen() {
     const markedDates = filteredData.reduce<MarkedDates>((acc, item) => {
         acc[item.date] = {
             selected: true,
-            selectedColor: 'blue',
+            // selectedColor: 'blue',
         };
         return acc;
     }, {});
@@ -123,84 +141,129 @@ export default function StatisticScreen() {
 
     console.log('data:', data)
     console.log('checked', checked)
-    console.log('date', currentDate)
+
+    console.log('activeValues: ', activeValues)
+    console.log('filteredData: ', filteredData)
+
+    console.log('markedDates: ', markedDates)
 
     return(
         <Screen>
-            {renderLabel()}
-            <List.AccordionGroup>
-                {dropDownData.map((dropData) => (
-                    <List.Accordion
-                        title={dropData.label} id={dropData.value} key={dropData.value}
+            {/* {renderLabel()} */}
+            <TextWrapper variant='bigTitle'>
+                Статистика
+            </TextWrapper>
+            <Card>
+                <List.AccordionGroup>
+                    {dropDownData.map((dropData) => (
+                        <List.Accordion
+                            title={dropData.label} 
+                            id={dropData.value} 
+                            key={dropData.value} 
+                            titleStyle={{ color: "white" }}
+                            style={{ backgroundColor: "transparent", margin: 0, paddingVertical: 0  }}
+                            contentStyle={{ paddingVertical: 0, paddingHorizontal: 0 }}
+                            theme={{
+                                colors: {
+                                    background: "transparent",
+                                    surface: "transparent", 
+                                }
+                            }}
+                        >
+                            <View style={{ maxHeight: 200 }}>
+                                <ScrollView nestedScrollEnabled={true}>
+                                    {dropData.data.map((item) => (
+                                        <List.Item
+                                            titleStyle={{ color: colors.text, fontSize: 14 }}
+                                            style={{ backgroundColor: "transparent", margin: 0, paddingVertical: 0  }}
+                                            key={item.value}
+                                            title={item.label}
+                                            onPress={() => toggle(item.value)}
+                                            left={() => (
+                                            <Checkbox
+                                                status={checked[item.value] ? "checked" : "unchecked"}
+                                                color={colors.active}
+                                            />
+                                            )}
+                                        />
+                                    ))}
+                                </ScrollView>
+                            </View>
+                        </List.Accordion>
+                    ))}
+                    {/* <List.Accordion
+                        title="Симптомы"
+                        expanded={expandedSymptoms}
+                        onPress={() => setExpandedSymptoms((prev) => !prev)}
                     >
-                        {dropData.data.map((item) => (
-                            <List.Item
-                                style={{backgroundColor: "white"}}
-                                key={item.value}
-                                title={item.label}
-                                onPress={() => toggle(item.value)}
-                                left={() => (
-                                <Checkbox
-                                    status={checked[item.value] ? "checked" : "unchecked"}
-                                />
-                                )}
-                            />
-                        ))}
+                        <List.Item title="Галлюцинации">
+                        </List.Item>
+                        <List.Item title="Тремор" />
+                        <List.Item title="Спутанность мыслей" />
+                        <List.Item title="Апатия" />
+                        <List.Item title="Странные мысли" />
                     </List.Accordion>
-                ))}
-                {/* <List.Accordion
-                    title="Симптомы"
-                    expanded={expandedSymptoms}
-                    onPress={() => setExpandedSymptoms((prev) => !prev)}
-                >
-                    <List.Item title="Галлюцинации">
-                    </List.Item>
-                    <List.Item title="Тремор" />
-                    <List.Item title="Спутанность мыслей" />
-                    <List.Item title="Апатия" />
-                    <List.Item title="Странные мысли" />
-                </List.Accordion>
-                <List.Accordion
-                    title="Триггеры"
-                    expanded={expandedTriggers}
-                    onPress={() => setExpandedTriggers((prev) => !prev)}
-                >
-                    <List.Item title="Недостаток сна" />
-                    <List.Item title="Социальная изоляция" />
-                    <List.Item title="Долгое нахождение дома" />
-                    <List.Item title="Стресс" />
-                </List.Accordion> */}
-            </List.AccordionGroup>
-            <Calendar
-                // Customize the appearance of the calendar
-                style={{
-                    borderWidth: 1,
-                    borderColor: 'gray',
-                    height: 350
-                }}
-                // Specify the current date
-                current={currentDate}
-                // Callback that gets called when the user selects a day
-                onDayPress={day => {
-                    setPressedDay(day.dateString)
-                    setOpenDayPopup(true)
-                }}
-                // Mark specific dates as marked
-                markedDates={markedDates}
-            />
+                    <List.Accordion
+                        title="Триггеры"
+                        expanded={expandedTriggers}
+                        onPress={() => setExpandedTriggers((prev) => !prev)}
+                    >
+                        <List.Item title="Недостаток сна" />
+                        <List.Item title="Социальная изоляция" />
+                        <List.Item title="Долгое нахождение дома" />
+                        <List.Item title="Стресс" />
+                    </List.Accordion> */}
+                </List.AccordionGroup>
+                <View style={{ width: "100%", height: 1, borderWidth: 1, borderColor: colors.secondary, marginVertical: 16 }}></View>
+                <Calendar
+                    theme={{
+                        todayTextColor: colors.active,
+                        calendarBackground: "transparent",
+                        selectedDayBackgroundColor: colors.active,
+                        dayTextColor: colors.text,
+                        monthTextColor: colors.text,
+                        arrowColor: colors.secondary
+                    }}
+                    // Specify the current date
+                    current={nowLocalTime().slice(0, 10)}
+                    // Callback that gets called when the user selects a day
+                    onDayPress={day => {
+                        setPressedDay(day.dateString)
+                        setOpenDayPopup(true)
+                    }}
+                    // Mark specific dates as marked
+                    markedDates={markedDates}
+                />
+            </Card>
             <PopupWindow visible={openDayPopup} onClose={() => {console.log('pressedDay: ', pressedDay); setOpenDayPopup(false)}}>
-                <View>
-                    <TextWrapper variant='title' style={{color: 'black'}}>
+                <View style={{ width: "100%", marginRight: "auto" }}>
+                    <TextWrapper variant='title'>
                         В этот день:
                     </TextWrapper>
-                    {data.filter(item => item.date === pressedDay)[0]?.value.map((fvalue) => (
-                        <TextWrapper key={fvalue.value} style={{ color: 'black' }}>
-                            {`${dayPartMap.filter(day => day.value === fvalue.dayPart)[0].label}: ${feelingItems.filter(i => i.value === fvalue.value)[0].label}(${fvalue.score}/5)`}
-                        </TextWrapper>
+                    {dayPartMap.map(dayMap => (
+                        <View key={dayMap.value} style={{ width: "100%", alignItems: "flex-start", paddingTop: 10 }}>
+                            <TextWrapper style={{ fontWeight: "bold" }}>
+                                {`${dayMap.label}:`}
+                            </TextWrapper>
+                            <View style={{ width: "100%", alignItems: "flex-start", paddingLeft: 10 }}>
+                                {data.find(item => item.date === pressedDay)?.feelings.map((feeling) => (feeling.dayPart === dayMap.value) && (
+                                    <TextWrapper key={feeling.value}>
+                                        {`${feelingItems.filter(i => i.value === feeling.value)[0].label}(${feeling.score}/5)`}
+                                    </TextWrapper>
+                                ))} 
+                                {data.find(item => item.date === pressedDay)?.symptoms.map((symptom) => (symptom.dayPart === dayMap.value) && (
+                                    <TextWrapper key={symptom.value}>
+                                        {`${symptomItems.filter(i => i.value === symptom.value)[0].label}`}
+                                    </TextWrapper>
+                                ))}
+                            </View>
+                        </View>
                     ))}
+                    {/* <View style={{ height: 1, width: "100%", borderColor: "black", borderWidth: 1 }}></View> */}
+                    
                 </View>
             </PopupWindow>
-      </Screen>
+        </Screen>
         
     )
 }

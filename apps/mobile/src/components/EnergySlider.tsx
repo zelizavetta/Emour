@@ -5,12 +5,10 @@ import { LinearGradient } from "expo-linear-gradient";
 import TextWrapper from "@/components/ui/textWrapper";
 import { colors } from "@/constants/colors";
 import Button from "@/components/ui/button";
-import { useFeelings } from "@/providers/UserContext";
 
 
 export default function EnergySlider({ addFeelingRecord, feelings } : any) {
   const [value, setValue] = useState(3);
-  const time = new Date().toISOString()
 
   const emojiMap: Record<number, string> = {
     1: "😩",
@@ -22,7 +20,7 @@ export default function EnergySlider({ addFeelingRecord, feelings } : any) {
 
   return (
     <View>
-      <TextWrapper variant="title">
+      <TextWrapper variant="title" style={styles.title}>
           Отметь текущую энергию
       </TextWrapper>
       <TextWrapper variant="description">
@@ -52,10 +50,10 @@ export default function EnergySlider({ addFeelingRecord, feelings } : any) {
       </View>
 
       <View style={styles.labels}>
-        <TextWrapper style={styles.label}>Очень низкая</TextWrapper>
-        <TextWrapper style={styles.label}>Очень высокая</TextWrapper>
+        <TextWrapper style={styles.label} variant="description">Очень низкая</TextWrapper>
+        <TextWrapper style={styles.label} variant="description">Очень высокая</TextWrapper>
       </View>
-      <Button variant="secondary" style={styles.button} onPress={() => addFeelingRecord('energy', value, time)}>
+      <Button variant="secondary" style={styles.button} onPress={() => {addFeelingRecord('energy', value); setValue(3)}}>
         Готово
       </Button>
     </View>
@@ -63,6 +61,9 @@ export default function EnergySlider({ addFeelingRecord, feelings } : any) {
 }
 
 const styles = StyleSheet.create({
+  title: {
+    marginBottom: 8
+  },
   sliderWrapper: {
     height: 24,
     justifyContent: "center",

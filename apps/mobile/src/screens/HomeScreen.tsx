@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { LineChart } from "react-native-gifted-charts";
 import { RadioButton, List, Checkbox } from "react-native-paper";
 import { useEffect, useState } from "react";
@@ -26,8 +26,8 @@ export default function HomeScreen() {
     const [symptomsRecords, setSymptomsRecords] = useState<Symptom[]>([])
     const [symptomsChecked, setSymptomsChecked] = useState<string[]>([])
     const [haveSymptoms, setHaveSymptoms] = useState<boolean>()
-    const time = new Date().toISOString()
     // console.log('feelings: ', feelings)
+
     useEffect(() => {
         if (feelings.length === 0) {
             setMoodRecords([])
@@ -67,7 +67,7 @@ export default function HomeScreen() {
                 <TextWrapper variant="title">
                     Есть сегодня симптомы?
                 </TextWrapper>
-                <View style={styles.symptompsOptionsContainer}>
+                <ScrollView style={styles.symptompsOptionsContainer}>
                     <View style={styles.symptompsOptions}>
                         <RadioButton 
                             value='Нет'
@@ -90,27 +90,28 @@ export default function HomeScreen() {
                             Да
                         </TextWrapper>
                     </View>
-                    {symptomItems.map(item => (
-                        <View key={item.value} style={styles.symptomsList}>
-                            <Checkbox
-                                key={item.value}
-                                disabled={!haveSymptoms}
-                                onPress={() => 
-                                    symptomsChecked.findIndex(sym => sym === item.value) === -1 ? 
-                                    setSymptomsChecked(prev => [...prev, item.value]) :
-                                    setSymptomsChecked(prev => prev.filter(p => p !== item.value))
-                                }
-                                status={symptomsChecked.findIndex(sym => sym === item.value) === -1 ? "unchecked" : "checked"} 
-                            />
-                            <TextWrapper>
-                                {item.label}
-                            </TextWrapper>
-                        </View>
-                    ))}
-                </View>
+                    <View>
+                        {symptomItems.map(item => (
+                            <View key={item.value} style={styles.symptomsList}>
+                                <Checkbox
+                                    disabled={!haveSymptoms}
+                                    onPress={() => 
+                                        symptomsChecked.findIndex(sym => sym === item.value) === -1 ? 
+                                        setSymptomsChecked(prev => [...prev, item.value]) :
+                                        setSymptomsChecked(prev => prev.filter(p => p !== item.value))
+                                    }
+                                    status={symptomsChecked.findIndex(sym => sym === item.value) === -1 ? "unchecked" : "checked"} 
+                                />
+                                <TextWrapper>
+                                    {item.label}
+                                </TextWrapper>
+                            </View>
+                        ))}
+                    </View>
+                </ScrollView>
                 <Button 
                     variant="secondary" 
-                    onPress={() => addSymptomsRecord(symptomsChecked, time)}
+                    onPress={() => {addSymptomsRecord(symptomsChecked); setSymptomsChecked([]); setHaveSymptoms(false)}}
                     style={styles.symptomsButton}
                     disabled={!haveSymptoms || symptomsChecked.length === 0}
                 >
@@ -136,8 +137,7 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
         gap: 8,
-        height: 300,
-        overflow: "scroll"
+        flexGrow: 1
     },
     symptompsOptions: {
         display: "flex",

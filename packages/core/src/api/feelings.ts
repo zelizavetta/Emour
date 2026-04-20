@@ -6,9 +6,10 @@ import { CreateFeelingRecordReq, CreateFeelingRecordRes, Feeling, FeelingType } 
 export async function apiCreateFeelingRecord(
     feelingType: FeelingType, 
     score: number, 
-    createdAtClient: string
+    createdAtClient: string,
+    clientTimezone: string
   ): Promise<Feeling> {
-  const response = await post<ApiResponse<Feeling>>('/api/feelings', { feelingType, score, createdAtClient });
+  const response = await post<ApiResponse<Feeling>>('/api/feelings', { feelingType, score, createdAtClient, clientTimezone });
   return response.data;
 }
 

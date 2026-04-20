@@ -10,44 +10,49 @@ import { QueryResult } from 'pg'
 export const router = express.Router()
 
 router.post('/', asyncHandler(async(req: Request, res: Response) => {
-    const { symptoms, createdAtClient } = req.body
+    const { symptoms, createdAtClient, clientTimezone } = req.body
 
     if (!symptoms) {
         throw ApiError.validation("Validation error", { 
             fields: {
-                feelingType: {
+                type: {
                     code: FIELD_ERRORS.REQUIRED,
                 },
             }, 
         })
     }
-    const result: QueryResult[] = []
-    symptoms.array.forEach(async (symptom: any) => {
+    console.log('symptoms: ', symptoms)
+    const result = []
+    for (const symptom of symptoms) {
         const response = await db.query(`
-            INSERT INTO symptoms (type, created_at_client)
-            VALUES ($1, $2)
+            INSERT INTO symptoms (symptom_type, created_at_client, client_timezone)
+            VALUES ($1, $2, $3)
             RETURNING
                 id,
-                type,
+                symptom_type        AS "symptomType",
                 created_at_server   AS "createdAtServer",
                 created_at_client   AS "createdAtClient",
+                client_timezone     AS "clientTimezone",
                 day_part            AS "dayPart"
-        `, [symptom, createdAtClient])    
+        `, [symptom, createdAtClient, clientTimezone])    
         if (response.rowCount === 0) {
             throw ApiError.internal("Internal server error", { details: "Create symptom record failed" })
         }
+        console.log('symptom: ', response.rows[0])
         result.push(response.rows[0])
-    });
-    ApiSuccess.created(res, result)
+    }
+    
+    ApiSuccess.created(res, result.map(row => {return({type: "symptom", ...row})}))
 }))
 
 router.get('/all', asyncHandler(async(req: Request, res: Response) => {
     const result = await db.query(`
         SELECT
             id,
-            type,
+            symptom_type        AS "symptomType",
             created_at_server   AS "createdAtServer",
             created_at_client   AS "createdAtClient",
+            client_timezone     AS "clientTimezone",
             day_part            AS "dayPart"
         FROM symptoms
         ORDER BY created_at_server DESC
@@ -55,5 +60,5 @@ router.get('/all', asyncHandler(async(req: Request, res: Response) => {
     if (result.rowCount === 0) {
         throw ApiError.notFound("Not found", { details: "No symptom records in db" })
     }
-    ApiSuccess.ok(res, result.rows)
+    ApiSuccess.ok(res, result.rows.map(row => {return({type: "symptom", ...row})}))
 }))

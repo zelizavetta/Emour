@@ -1,6 +1,8 @@
+import { colors } from '@/constants/colors';
 import React, {useState} from 'react';
 import {Alert, Modal, StyleSheet, Text, Pressable, View} from 'react-native';
 import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
+import Button from './button';
 
 
 type PopupWindowProps = {
@@ -25,12 +27,12 @@ export function PopupWindow({ children, visible, onClose}: PopupWindowProps) {
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               {children}
-              <Pressable
-                style={[styles.button, styles.buttonClose]}
+              <Button
+                style={styles.button}
                 // onPress={() => {setModalVisible(!modalVisible); onClose()}}>
                 onPress={onClose}>
-                <Text style={styles.textStyle}>Ок</Text>
-              </Pressable>
+                Ок
+              </Button>
             </View>
           </View>
         </Modal>
@@ -53,7 +55,8 @@ const styles = StyleSheet.create({
     },
     modalView: {
         margin: 20,
-        backgroundColor: 'white',
+        backgroundColor: colors.background,
+        color: colors.text,
         borderRadius: 20,
         padding: 35,
         alignItems: 'center',
@@ -65,17 +68,17 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5,
+        width: "80%"
     },
     button: {
-        borderRadius: 20,
-        padding: 10,
-        elevation: 2,
+      marginTop: 16,
+      marginHorizontal: "auto"
     },
     buttonOpen: {
-        backgroundColor: '#F194FF',
+      backgroundColor: '#F194FF',
     },
     buttonClose: {
-        backgroundColor: '#2196F3',
+      backgroundColor: '#2196F3',
     },
     textStyle: {
         color: 'white',
@@ -85,5 +88,6 @@ const styles = StyleSheet.create({
     modalText: {
         marginBottom: 15,
         textAlign: 'center',
+        color: colors.text
     },
 });

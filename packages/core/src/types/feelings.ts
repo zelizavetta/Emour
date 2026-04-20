@@ -1,4 +1,4 @@
-import { DayPart } from "./common.js"
+import { DayPart, UserRecord } from "./common.js"
 
 export type FeelingType = 'mood' | 'anxiety' | 'energy'
 
@@ -14,11 +14,18 @@ export interface CreateFeelingRecordRes {
     dayPart: DayPart
 }
 
-export interface Feeling {
-    id: number
-    feelingType: FeelingType
-    score: number
-    createdAtServer: string
-    createdAtClient: string
-    dayPart: DayPart
+// export interface Feeling {
+//     id: number
+//     feelingType: FeelingType
+//     score: number
+//     createdAtServer: string
+//     createdAtClient: string
+//     clientTimezone: string
+//     dayPart: DayPart
+// }
+
+export interface Feeling extends UserRecord {
+    type: 'feeling';
+    score: number;
+    feelingType: FeelingType;
 }

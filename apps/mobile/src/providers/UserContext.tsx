@@ -33,10 +33,13 @@ export function UserProvider({ children }: { children: ReactNode }) {
     const addFeelingRecord = useCallback(async(
         feelingType: FeelingType, 
         score: number, 
-        createdAtClient: string
+        createdAtClient?: string,
+        clientTimezone?: string
     ): Promise<Feeling | null> => {
+        const localTime = createdAtClient ?? new Date().toISOString();
+        const timezone = clientTimezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
         try {
-            const record = await apiCreateFeelingRecord(feelingType, score, createdAtClient)
+            const record = await apiCreateFeelingRecord(feelingType, score, localTime, timezone)
             console.log(record)
             if (record) {
                 setFeelings(prev => [record, ...prev])
@@ -50,10 +53,14 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
     const addSymptomsRecord = useCallback(async(
         symptoms: string[], 
-        createdAtClient: string
+        createdAtClient?: string,
+        clientTimezone?: string
     ): Promise<Symptom[] | null> => {
+        const localTime = createdAtClient ?? new Date().toISOString();
+        const timezone = clientTimezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
         try {
-            const record = await addSymptomsRecord(symptoms, createdAtClient)
+            console.log('symptoms: ', symptoms)
+            const record = await apiCreateSympomRecords(symptoms, localTime, timezone)
             console.log(record)
             if (record) {
                 setSymptoms(prev => [...record, ...prev])

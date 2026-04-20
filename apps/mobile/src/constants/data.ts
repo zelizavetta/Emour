@@ -1,8 +1,8 @@
 export const dayPartMap = [
-    { value: 'evening', label: 'вечер'},
     { value: 'morning', label: 'утро'},
-    { value: 'night', label: 'ночь'},
     { value: 'afternoon', label: 'день'},
+    { value: 'evening', label: 'вечер'},
+    { value: 'night', label: 'ночь'},
 ]
 
 // export const dropDownItems = [

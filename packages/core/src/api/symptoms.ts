@@ -8,7 +8,11 @@ export async function apiGetAllSymptomRecords(): Promise<Symptom[]> {
     return response.data
 }
 
-export async function apiCreateSympomRecords(symptoms: string[], createdAtClient: string): Promise<Symptom[]> {
-    const response = await post<ApiResponse<Symptom[]>>(`/api/symptoms`, { symptoms, createdAtClient })
+export async function apiCreateSympomRecords(
+        symptoms: string[], 
+        createdAtClient: string, 
+        clientTimezone: string
+    ): Promise<Symptom[]> {
+    const response = await post<ApiResponse<Symptom[]>>(`/api/symptoms`, { symptoms, createdAtClient, clientTimezone })
     return response.data
 }
