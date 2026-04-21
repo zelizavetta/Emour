@@ -4,6 +4,7 @@ import express from 'express'
 import cors from 'cors'
 import { router as feelingsRoutes } from './routes/feelings'
 import { router as symptomsRoutes } from './routes/symptoms'
+import { router as notesRoutes } from './routes/notes'
 import { errorHandler } from './errorHandler'
 
 
@@ -26,6 +27,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/feelings', feelingsRoutes)
 app.use('/api/symptoms', symptomsRoutes)
+app.use('/api/notes', notesRoutes)
 
 app.use(errorHandler);
 

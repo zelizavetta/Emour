@@ -4,6 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import HomeScreen from "@/screens/HomeScreen";
 import WelcomeScreen from "@/screens/WelcomeScreen";
 import StatisticScreen from "@/screens/StatisticsScreen";
+import NotesScreen from "@/screens/NotesScreen";
 // import ActivityScreen from "../screens/ActivityScreen";
 // import JournalScreen from "../screens/JournalScreen";
 // import ProfileScreen from "../screens/ProfileScreen";
@@ -41,6 +42,9 @@ export default function MainTabs() {
           if (route.name === "Statistic") {
             iconName = focused ? "stats-chart" : "stats-chart-outline";
           }
+          if (route.name === "Notes") {
+            iconName = focused ? "document-text" : "document-text-outline";
+          }
 
           return <Ionicons name={iconName} size={size} color={color} />;
         }
@@ -55,6 +59,11 @@ export default function MainTabs() {
         name="Statistic"
         component={StatisticScreen}
         options={{ tabBarLabel: "Statistic" }}
+      />
+      <Tab.Screen
+        name="Notes"
+        component={NotesScreen}
+        options={{ tabBarLabel: "Notes" }}
       />
       {/* <Tab.Screen
         name="Welcome"

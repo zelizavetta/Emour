@@ -6,7 +6,10 @@ import {
     UserContextType,
     Symptom,
     apiCreateSympomRecords,
-    apiGetAllSymptomRecords
+    apiGetAllSymptomRecords,
+    Note,
+    apiGetAllNotes,
+    apiCreateNote
  } from '@emour/core';
 import React, { createContext, useContext, useState, useCallback, ReactNode, useEffect, useRef } from 'react';
 
@@ -16,14 +19,20 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export function UserProvider({ children }: { children: ReactNode }) {
     const [feelings, setFeelings] = useState<Feeling[]>([])
     const [symptoms, setSymptoms] = useState<Symptom[]>([])
+    const [notes, setNotes] = useState<Note[]>([])
 
     useEffect(() => {
         (async () => {
             try {
-                const [ feelings, symptoms ] = await Promise.all([apiGetAllFeelingRecord(), apiGetAllSymptomRecords()])
+                const [ feelings, symptoms, notes ] = await Promise.all([
+                    apiGetAllFeelingRecord(), 
+                    apiGetAllSymptomRecords(),
+                    apiGetAllNotes()
+                ])
                 // console.log(feelings)
                 setFeelings(feelings)
                 setSymptoms(symptoms)
+                setNotes(notes)
             } catch (err) {
                 console.warn('records load error', err)
             }
@@ -72,11 +81,51 @@ export function UserProvider({ children }: { children: ReactNode }) {
         }
     }, [])
 
+    const addNote = useCallback(async(
+        title: string,
+        text: string,
+        createdAtClient?: string,
+        clientTimezone?: string
+    ): Promise<Note | null> => {
+        const localTime = createdAtClient ?? new Date().toISOString();
+        const timezone = clientTimezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
+        try {
+            console.log('note: ', text)
+            const note = await apiCreateNote(title, text, localTime, timezone)
+            console.log(note)
+            if (note) {
+                setNotes(prev => [note, ...prev])
+            }
+            return note
+        } catch (err) {
+            console.warn('add note error', err)
+            return null
+        }
+    }, [])
+
+    const updateNoteTitle = useCallback(async(
+        noteId: number,
+        title: string,
+    ): Promise<number | null> => {
+        return null
+    }, [])
+
+    const updateNoteText = useCallback(async(
+        noteId: number,
+        text: string,
+    ): Promise<number | null> => {
+        return null
+    }, [])
+
     const contextValue: UserContextType = {
         feelings,
         symptoms,
+        notes,
         addFeelingRecord,
-        addSymptomsRecord
+        addSymptomsRecord,
+        addNote,
+        updateNoteTitle,
+        updateNoteText
     }
 
     return (

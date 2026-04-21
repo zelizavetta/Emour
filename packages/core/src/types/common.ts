@@ -1,6 +1,6 @@
 export type DayPart = 'night' | 'morning' | 'afternoon' | 'evening'
 
-export type UserRecordType = 'feeling' | 'symptom' | 'trigger' | 'sleep'
+export type UserRecordType = 'feeling' | 'symptom' | 'trigger' | 'sleep' | 'note'
 
 export interface UserRecord {
     id: number;

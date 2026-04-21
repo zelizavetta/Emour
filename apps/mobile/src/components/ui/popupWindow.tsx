@@ -1,17 +1,17 @@
 import { colors } from '@/constants/colors';
 import React, {useState} from 'react';
-import {Alert, Modal, StyleSheet, Text, Pressable, View} from 'react-native';
+import {Alert, Modal, StyleSheet, Text, Pressable, View, ViewProps} from 'react-native';
 import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
 import Button from './button';
 
 
-type PopupWindowProps = {
+type PopupWindowProps = ViewProps & {
     children: any,
     visible: boolean
     onClose: () => void
 }
 
-export function PopupWindow({ children, visible, onClose}: PopupWindowProps) {
+export function PopupWindow({ children, style, visible, onClose}: PopupWindowProps) {
 //   const [modalVisible, setModalVisible] = useState(visible);
   return (
     <SafeAreaProvider style={styles.container}>
@@ -24,7 +24,7 @@ export function PopupWindow({ children, visible, onClose}: PopupWindowProps) {
             Alert.alert('Modal has been closed.');
             // setModalVisible(!modalVisible);
           }}>
-          <View style={styles.centeredView}>
+          <View style={[styles.centeredView, style]}>
             <View style={styles.modalView}>
               {children}
               <Button
