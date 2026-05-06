@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Switch, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Switch, ScrollView, ActivityIndicator } from 'react-native';
 import { Calendar, CalendarList, Agenda, LocaleConfig } from 'react-native-calendars';
 import { List, Checkbox } from 'react-native-paper';
 
@@ -30,7 +30,7 @@ export default function StatisticScreen() {
     const [data, setData] = useState<StatisticDataItem[]>([])
     const [dataFeelings, setDataFeelings] = useState<StatisticDataItem[]>([])
     const [dataSymptoms, setDataSymptoms] = useState<StatisticDataItem[]>([])
-    const { feelings, symptoms, addFeelingRecord } = useUserRecords()
+    const { feelings, symptoms, addFeelingRecord, isLoading, refresh } = useUserRecords()
 
     type StatisticFeelingItem = {
         value: string;
@@ -148,7 +148,7 @@ export default function StatisticScreen() {
     console.log('markedDates: ', markedDates)
 
     return(
-        <Screen>
+        <Screen onRefresh={refresh}>
             {/* {renderLabel()} */}
             <TextWrapper variant='bigTitle'>
                 Статистика
@@ -215,7 +215,9 @@ export default function StatisticScreen() {
                     </List.Accordion> */}
                 </List.AccordionGroup>
                 <View style={{ width: "100%", height: 1, borderWidth: 1, borderColor: colors.secondary, marginVertical: 16 }}></View>
-                <Calendar
+                {isLoading ? (
+                    <ActivityIndicator color={colors.active} style={{ paddingVertical: 40 }} />
+                ) : <Calendar
                     theme={{
                         todayTextColor: colors.active,
                         calendarBackground: "transparent",
@@ -233,7 +235,7 @@ export default function StatisticScreen() {
                     }}
                     // Mark specific dates as marked
                     markedDates={markedDates}
-                />
+                />}
             </Card>
             <PopupWindow visible={openDayPopup} onClose={() => {console.log('pressedDay: ', pressedDay); setOpenDayPopup(false)}}>
                 <View style={{ width: "100%", marginRight: "auto" }}>

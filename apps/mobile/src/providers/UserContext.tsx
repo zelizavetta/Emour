@@ -20,24 +20,32 @@ export function UserProvider({ children }: { children: ReactNode }) {
     const [feelings, setFeelings] = useState<Feeling[]>([])
     const [symptoms, setSymptoms] = useState<Symptom[]>([])
     const [notes, setNotes] = useState<Note[]>([])
+    const [isLoading, setIsLoading] = useState<boolean>(true)
+
+    const loadRecords = useCallback(async () => {
+        try {
+            const [feelings, symptoms, notes] = await Promise.all([
+                apiGetAllFeelingRecord(),
+                apiGetAllSymptomRecords(),
+                apiGetAllNotes()
+            ])
+            setFeelings(feelings)
+            setSymptoms(symptoms)
+            setNotes(notes)
+        } catch (err) {
+            console.warn('records load error', err)
+        } finally {
+            setIsLoading(false)
+        }
+    }, [])
 
     useEffect(() => {
-        (async () => {
-            try {
-                const [ feelings, symptoms, notes ] = await Promise.all([
-                    apiGetAllFeelingRecord(), 
-                    apiGetAllSymptomRecords(),
-                    apiGetAllNotes()
-                ])
-                // console.log(feelings)
-                setFeelings(feelings)
-                setSymptoms(symptoms)
-                setNotes(notes)
-            } catch (err) {
-                console.warn('records load error', err)
-            }
-        })()
+        loadRecords()
     }, [])
+
+    const refresh = useCallback(async () => {
+        await loadRecords()
+    }, [loadRecords])
 
     const addFeelingRecord = useCallback(async(
         feelingType: FeelingType, 
@@ -121,6 +129,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
         feelings,
         symptoms,
         notes,
+        isLoading,
+        refresh,
         addFeelingRecord,
         addSymptomsRecord,
         addNote,

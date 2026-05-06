@@ -19,7 +19,7 @@ import { symptomItems } from "@/constants/data";
 
 
 export default function HomeScreen() {
-    const { feelings, symptoms, addFeelingRecord, addSymptomsRecord } = useUserRecords()
+    const { feelings, symptoms, addFeelingRecord, addSymptomsRecord, refresh } = useUserRecords()
     const [moodRecords, setMoodRecords] = useState<Feeling[]>([])
     const [energyRecords, setEnergyRecords] = useState<Feeling[]>([])
     const [anxietyRecords, setAnxietyRecords] = useState<Feeling[]>([])
@@ -46,7 +46,7 @@ export default function HomeScreen() {
     }, [feelings, symptoms]);
 
     return (
-        <Screen>
+        <Screen onRefresh={refresh}>
             <TextWrapper variant="bigTitle">
                 Че как, котёнок?
             </TextWrapper>

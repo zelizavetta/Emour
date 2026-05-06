@@ -7,6 +7,7 @@ export interface UserContextType {
     feelings: Feeling[],
     symptoms: Symptom[],
     notes: Note[],
+    isLoading: boolean,
     addFeelingRecord: (
         feelingType: FeelingType, 
         score: number, 
@@ -31,5 +32,6 @@ export interface UserContextType {
     updateNoteText: (
         noteId: number,
         text: string
-    ) => Promise<number | null>
+    ) => Promise<number | null>,
+    refresh: () => Promise<void>
 }
