@@ -6,7 +6,18 @@ const isProd = APP_ENV === "production";
 const config: ExpoConfig = {
   name: isProd ? "Emour" : "Emour Dev",
   slug: "my-expo-app",
-  plugins: ["expo-secure-store"],
+  plugins: [
+    "expo-secure-store",
+    [
+      "expo-notifications",
+      {
+        icon: "./src/assets/logo.jpg",
+        color: "#FA57B7",
+        defaultChannel: "meds",
+        androidMode: "default",
+      },
+    ],
+  ],
   scheme: "myexpoapp",
   version: "1.0.0",
   orientation: "portrait",
