@@ -2,39 +2,37 @@ import dotenv from 'dotenv'
 dotenv.config({ path: process.cwd() + '/.env' })
 import express from 'express'
 import cors from 'cors'
+import { router as authRoutes } from './routes/auth'
 import { router as feelingsRoutes } from './routes/feelings'
 import { router as symptomsRoutes } from './routes/symptoms'
 import { router as notesRoutes } from './routes/notes'
+import { router as medsRoutes } from './routes/meds'
 import { errorHandler } from './errorHandler'
-
+import { requireAuth } from './middleware/auth'
 
 const app = express()
 app.use(express.json())
+app.use(cors({
+  origin: process.env.CORS_ORIGIN,
+  credentials: true
+}))
 
 app.use((req, _res, next) => {
   console.log(new Date().toISOString(), req.method, req.url)
   next()
 })
 
-app.use(cors({
-  origin: process.env.CORS_ORIGIN,
-  credentials: true
-}))
-
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   res.send({ status: 'ok' })
 })
 
-app.use('/api/feelings', feelingsRoutes)
-app.use('/api/symptoms', symptomsRoutes)
-app.use('/api/notes', notesRoutes)
+app.use('/api/auth', authRoutes)
+app.use('/api/feelings', requireAuth, feelingsRoutes)
+app.use('/api/symptoms', requireAuth, symptomsRoutes)
+app.use('/api/notes', requireAuth, notesRoutes)
+app.use('/api/meds', requireAuth, medsRoutes)
 
-app.use(errorHandler);
-
-// const PORT = process.env.PORT || 3002
-// app.listen(PORT, () => {
-//   console.log(`API running on ${process.env.API_URL}:${PORT}`)
-// })
+app.use(errorHandler)
 
 const PORT = 3002
 
