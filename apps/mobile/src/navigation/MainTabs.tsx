@@ -5,6 +5,7 @@ import HomeScreen from "@/screens/HomeScreen";
 import WelcomeScreen from "@/screens/WelcomeScreen";
 import StatisticScreen from "@/screens/StatisticsScreen";
 import NotesScreen from "@/screens/NotesScreen";
+import MedsScreen from "@/screens/MedsScreen";
 // import ActivityScreen from "../screens/ActivityScreen";
 // import JournalScreen from "../screens/JournalScreen";
 // import ProfileScreen from "../screens/ProfileScreen";
@@ -45,6 +46,9 @@ export default function MainTabs() {
           if (route.name === "Notes") {
             iconName = focused ? "document-text" : "document-text-outline";
           }
+          if (route.name === "Meds") {
+            iconName = focused ? "medkit" : "medkit-outline";
+          }
 
           return <Ionicons name={iconName} size={size} color={color} />;
         }
@@ -64,6 +68,11 @@ export default function MainTabs() {
         name="Notes"
         component={NotesScreen}
         options={{ tabBarLabel: "Notes" }}
+      />
+      <Tab.Screen
+        name="Meds"
+        component={MedsScreen}
+        options={{ tabBarLabel: "Meds" }}
       />
       {/* <Tab.Screen
         name="Welcome"

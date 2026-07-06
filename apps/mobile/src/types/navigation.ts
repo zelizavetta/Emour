@@ -8,6 +8,7 @@ export type MainTabParamList = {
   Welcome: undefined;
   Statistic: undefined;
   Notes: undefined;
+  Meds: undefined;
   Activity: undefined;
   Journal: undefined;
   Profile: undefined;
