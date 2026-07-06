@@ -157,13 +157,11 @@ export function UserProvider({ children }: { children: ReactNode }) {
         feelings,
         symptoms,
         notes,
-        meds,
         isLoading,
         refresh,
         addFeelingRecord,
         addSymptomsRecord,
         addNote,
-        addMeds,
         updateNoteTitle,
         updateNoteText
     }

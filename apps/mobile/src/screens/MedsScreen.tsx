@@ -21,7 +21,7 @@ import { useMeds } from '@/providers/MedsProvider';
 const TIME_RE = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
 export default function MedsScreen() {
-  const { meds, addMed, removeMed, toggleMed } = useMeds();
+  const { meds, addMed, removeMed, toggleMed, refresh } = useMeds();
 
   const [popupVisible, setPopupVisible] = useState(false);
   const [name, setName] = useState('');
@@ -81,7 +81,7 @@ export default function MedsScreen() {
 
   return (
     <>
-      <Screen>
+      <Screen onRefresh={refresh}>
         <TextWrapper variant="bigTitle">Таблетки</TextWrapper>
 
         <Button

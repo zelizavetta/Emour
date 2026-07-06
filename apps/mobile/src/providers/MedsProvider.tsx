@@ -9,6 +9,7 @@ interface MedsContextType {
   addMed: (name: string, dosage: string, times: string[]) => Promise<void>;
   removeMed: (id: number) => Promise<void>;
   toggleMed: (id: number) => Promise<void>;
+  refresh: () => Promise<void>;
 }
 
 const MedsContext = createContext<MedsContextType | undefined>(undefined);
@@ -42,6 +43,10 @@ export function MedsProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     loadMeds();
   }, []);
+
+  const refresh = useCallback(async () => {
+      await loadMeds()
+  }, [loadMeds]);
 
   const addMed = useCallback(async (name: string, dosage: string, times: string[]) => {
     const localTime = new Date().toISOString();
@@ -83,7 +88,7 @@ export function MedsProvider({ children }: { children: React.ReactNode }) {
   }, [meds]);
 
   return (
-    <MedsContext.Provider value={{ meds, isLoading, addMed, removeMed, toggleMed }}>
+    <MedsContext.Provider value={{ meds, isLoading, addMed, removeMed, toggleMed, refresh }}>
       {children}
     </MedsContext.Provider>
   );
