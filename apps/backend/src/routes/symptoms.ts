@@ -4,48 +4,43 @@ import { Request, Response } from 'express'
 import { ApiError } from '../errors/ApiError'
 import { asyncHandler } from '../asyncHandler'
 import { ApiSuccess } from '../success/ApiSuccess'
-import { Feeling, FIELD_ERRORS, Symptom } from '@emour/core'
-import { QueryResult } from 'pg'
+import { FIELD_ERRORS } from '@emour/core'
 
 export const router = express.Router()
 
-router.post('/', asyncHandler(async(req: Request, res: Response) => {
+router.post('/', asyncHandler(async (req: Request, res: Response) => {
     const { symptoms, createdAtClient, clientTimezone } = req.body
 
-    if (!symptoms) {
-        throw ApiError.validation("Validation error", { 
-            fields: {
-                type: {
-                    code: FIELD_ERRORS.REQUIRED,
-                },
-            }, 
+    if (!Array.isArray(symptoms) || symptoms.length === 0) {
+        throw ApiError.validation("Validation error", {
+            fields: { symptoms: { code: FIELD_ERRORS.REQUIRED } },
         })
     }
-    console.log('symptoms: ', symptoms)
-    const result = []
-    for (const symptom of symptoms) {
-        const response = await db.query(`
-            INSERT INTO symptoms (symptom_type, created_at_client, client_timezone)
-            VALUES ($1, $2, $3)
-            RETURNING
-                id,
-                symptom_type        AS "symptomType",
-                created_at_server   AS "createdAtServer",
-                created_at_client   AS "createdAtClient",
-                client_timezone     AS "clientTimezone",
-                day_part            AS "dayPart"
-        `, [symptom, createdAtClient, clientTimezone])    
-        if (response.rowCount === 0) {
-            throw ApiError.internal("Internal server error", { details: "Create symptom record failed" })
-        }
-        console.log('symptom: ', response.rows[0])
-        result.push(response.rows[0])
-    }
-    
-    ApiSuccess.created(res, result.map(row => {return({type: "symptom", ...row})}))
+
+    const values = symptoms.map((_: string, i: number) =>
+        `($${i * 3 + 1}, $${i * 3 + 2}, $${i * 3 + 3})`
+    ).join(', ')
+
+    const params: unknown[] = symptoms.flatMap((symptom: string) =>
+        [symptom, createdAtClient, clientTimezone]
+    )
+
+    const result = await db.query(`
+        INSERT INTO symptoms (symptom_type, created_at_client, client_timezone)
+        VALUES ${values}
+        RETURNING
+            id,
+            symptom_type        AS "symptomType",
+            created_at_server   AS "createdAtServer",
+            created_at_client   AS "createdAtClient",
+            client_timezone     AS "clientTimezone",
+            day_part            AS "dayPart"
+    `, params)
+
+    ApiSuccess.created(res, result.rows.map(row => ({ type: "symptom", ...row })))
 }))
 
-router.get('/all', asyncHandler(async(req: Request, res: Response) => {
+router.get('/all', asyncHandler(async (_req: Request, res: Response) => {
     const result = await db.query(`
         SELECT
             id,
@@ -57,8 +52,6 @@ router.get('/all', asyncHandler(async(req: Request, res: Response) => {
         FROM symptoms
         ORDER BY created_at_server DESC
     `)
-    if (result.rowCount === 0) {
-        throw ApiError.notFound("Not found", { details: "No symptom records in db" })
-    }
-    ApiSuccess.ok(res, result.rows.map(row => {return({type: "symptom", ...row})}))
+
+    ApiSuccess.ok(res, result.rows.map(row => ({ type: "symptom", ...row })))
 }))

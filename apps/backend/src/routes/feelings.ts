@@ -4,31 +4,21 @@ import { Request, Response } from 'express'
 import { ApiError } from '../errors/ApiError'
 import { asyncHandler } from '../asyncHandler'
 import { ApiSuccess } from '../success/ApiSuccess'
-import { Feeling, FIELD_ERRORS } from '@emour/core'
+import { FIELD_ERRORS } from '@emour/core'
 
 export const router = express.Router()
 
-router.post('/', asyncHandler(async(req: Request, res: Response) => {
+router.post('/', asyncHandler(async (req: Request, res: Response) => {
     const { feelingType, score, createdAtClient, clientTimezone } = req.body
 
     if (!feelingType) {
-        throw ApiError.validation("Validation error", { 
-            fields: {
-                feelingType: {
-                    code: FIELD_ERRORS.REQUIRED,
-                },
-            }, 
+        throw ApiError.validation("Validation error", {
+            fields: { feelingType: { code: FIELD_ERRORS.REQUIRED } },
         })
     }
-
     if (typeof score !== "number") {
-        throw ApiError.validation("Validation error", { 
-            fields: {
-                score: {
-                    code: FIELD_ERRORS.INVALID,
-                    message: "score must be a number"
-                },
-            }, 
+        throw ApiError.validation("Validation error", {
+            fields: { score: { code: FIELD_ERRORS.INVALID, message: "score must be a number" } },
         })
     }
 
@@ -38,7 +28,7 @@ router.post('/', asyncHandler(async(req: Request, res: Response) => {
         RETURNING
             id,
             feeling_type        AS "feelingType",
-            score               AS "score",
+            score,
             created_at_server   AS "createdAtServer",
             created_at_client   AS "createdAtClient",
             client_timezone     AS "clientTimezone",
@@ -46,18 +36,18 @@ router.post('/', asyncHandler(async(req: Request, res: Response) => {
     `, [feelingType, score, createdAtClient, clientTimezone])
 
     if (result.rowCount === 0) {
-        throw ApiError.internal("Internal server error", { details: "Create check record failed" })
+        throw ApiError.internal("Internal server error", { details: "Create feeling failed" })
     }
 
-    ApiSuccess.created(res, {type: "feeling", ...result.rows[0]})
+    ApiSuccess.created(res, { type: "feeling", ...result.rows[0] })
 }))
 
-router.get('/all', asyncHandler(async(req: Request, res: Response) => {
+router.get('/all', asyncHandler(async (_req: Request, res: Response) => {
     const result = await db.query(`
         SELECT
             id,
             feeling_type        AS "feelingType",
-            score               AS "score",
+            score,
             created_at_server   AS "createdAtServer",
             created_at_client   AS "createdAtClient",
             client_timezone     AS "clientTimezone",
@@ -65,9 +55,6 @@ router.get('/all', asyncHandler(async(req: Request, res: Response) => {
         FROM feelings
         ORDER BY created_at_server DESC
     `)
-    if (result.rowCount === 0) {
-        throw ApiError.notFound("Not found", { details: "No check records in db" })
-    }
 
-    ApiSuccess.ok(res, result.rows.map(row => {return({type: "feeling", ...row})}))
+    ApiSuccess.ok(res, result.rows.map(row => ({ type: "feeling", ...row })))
 }))
