@@ -1,10 +1,13 @@
 import React, { useRef, useState } from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
-import Carousel, { TCarouselProps } from "react-native-reanimated-carousel";
+import { View, StyleSheet, Pressable, Text } from "react-native";
+import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
 
+interface CarouselWrapperProps {
+    data: React.ReactNode[];
+}
 
-export default function CarouselWrapper({ data }) {
-    const ref = useRef(null);
+export default function CarouselWrapper({ data }: CarouselWrapperProps) {
+    const ref = useRef<ICarouselInstance>(null);
     const [width, setWidth] = useState(500);
     const [height, setHeight] = useState(290);
 
@@ -24,7 +27,7 @@ export default function CarouselWrapper({ data }) {
                 height={height}
                 data={data}
                 scrollAnimationDuration={1000}
-                renderItem={({ item }) => (
+                renderItem={({ item }: { item: React.ReactNode }) => (
                     <View style={styles.container}>
                         {item}
                         <Pressable 

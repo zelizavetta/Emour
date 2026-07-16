@@ -11,6 +11,9 @@ Notifications.setNotificationHandler({
   }),
 });
 
+export const MED_TAKEN_ACTION = 'med_taken';
+const MED_CATEGORY = 'med_reminder';
+
 export async function setupNotificationChannel(): Promise<void> {
   if (Platform.OS !== 'android') return;
   await Notifications.setNotificationChannelAsync('meds', {
@@ -21,6 +24,16 @@ export async function setupNotificationChannel(): Promise<void> {
   });
 }
 
+export async function setupMedCategory(): Promise<void> {
+  await Notifications.setNotificationCategoryAsync(MED_CATEGORY, [
+    {
+      identifier: MED_TAKEN_ACTION,
+      buttonTitle: '✓ Приняла',
+      options: { opensAppToForeground: false },
+    },
+  ]);
+}
+
 export async function requestNotificationPermissions(): Promise<boolean> {
   const { status: existing } = await Notifications.getPermissionsAsync();
   if (existing === 'granted') return true;
@@ -29,24 +42,80 @@ export async function requestNotificationPermissions(): Promise<boolean> {
 }
 
 export async function scheduleMedNotifications(
+  medId: number,
   name: string,
   dosage: string,
   times: string[],
+  days: number[],
 ): Promise<string[]> {
   const ids: string[] = [];
+  const body = dosage ? `${name} — ${dosage}` : name;
+  const content = {
+    title: 'Таблетки',
+    body,
+    sound: true,
+    android: { channelId: 'meds' },
+    categoryIdentifier: MED_CATEGORY,
+    data: { medId },
+  };
+
+  const allDays = days.length === 7;
+
   for (const time of times) {
     const [hour, minute] = time.split(':').map(Number);
+
+    if (allDays) {
+      const id = await Notifications.scheduleNotificationAsync({
+        content,
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.DAILY,
+          hour,
+          minute,
+        },
+      });
+      ids.push(id);
+    } else {
+      for (const weekday of days) {
+        const id = await Notifications.scheduleNotificationAsync({
+          content,
+          trigger: {
+            type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
+            weekday,
+            hour,
+            minute,
+          },
+        });
+        ids.push(id);
+      }
+    }
+  }
+  return ids;
+}
+
+// Schedule 3 one-time follow-up reminders at +10, +20, +30 minutes from now.
+export async function scheduleFollowUpNotifications(
+  medId: number,
+  name: string,
+  dosage: string,
+): Promise<string[]> {
+  const ids: string[] = [];
+  const body = dosage ? `${name} — ${dosage}` : name;
+  const content = {
+    title: '⏰ Напоминание о таблетках',
+    body,
+    sound: true,
+    android: { channelId: 'meds' },
+    categoryIdentifier: MED_CATEGORY,
+    data: { medId },
+  };
+
+  const now = Date.now();
+  for (let i = 1; i <= 3; i++) {
     const id = await Notifications.scheduleNotificationAsync({
-      content: {
-        title: 'Таблетки',
-        body: dosage ? `${name} — ${dosage}` : name,
-        sound: true,
-        android: { channelId: 'meds' },
-      },
+      content,
       trigger: {
-        type: Notifications.SchedulableTriggerInputTypes.DAILY,
-        hour,
-        minute,
+        type: Notifications.SchedulableTriggerInputTypes.DATE,
+        date: new Date(now + i * 10 * 60 * 1000),
       },
     });
     ids.push(id);

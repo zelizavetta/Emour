@@ -9,7 +9,7 @@ import { FIELD_ERRORS } from '@emour/core'
 export const router = express.Router()
 
 router.post('/', asyncHandler(async (req: Request, res: Response) => {
-    const { name, dosage, times, createdAtClient, clientTimezone } = req.body
+    const { name, dosage, times, days, createdAtClient, clientTimezone } = req.body
 
     if (!name) {
         throw ApiError.validation("Validation error", {
@@ -22,20 +22,23 @@ router.post('/', asyncHandler(async (req: Request, res: Response) => {
         })
     }
 
+    const daysValue = Array.isArray(days) && days.length > 0 ? days : [1, 2, 3, 4, 5, 6, 7]
+
     const result = await db.query(`
-        INSERT INTO meds (name, dosage, times, enabled, created_at_client, client_timezone)
-        VALUES ($1, $2, $3::jsonb, true, $4, $5)
+        INSERT INTO meds (name, dosage, times, days, enabled, created_at_client, client_timezone)
+        VALUES ($1, $2, $3::jsonb, $4::jsonb, true, $5, $6)
         RETURNING
             id,
             'med'               AS "type",
             name,
             dosage,
             times,
+            days,
             enabled,
             created_at_server   AS "createdAtServer",
             created_at_client   AS "createdAtClient",
             client_timezone     AS "clientTimezone"
-    `, [name, dosage ?? '', JSON.stringify(times), createdAtClient, clientTimezone])
+    `, [name, dosage ?? '', JSON.stringify(times), JSON.stringify(daysValue), createdAtClient, clientTimezone])
 
     if (result.rowCount === 0) {
         throw ApiError.internal("Internal server error", { details: "Create med failed" })
@@ -52,6 +55,7 @@ router.get('/all', asyncHandler(async (_req: Request, res: Response) => {
             name,
             dosage,
             times,
+            days,
             enabled,
             created_at_server   AS "createdAtServer",
             created_at_client   AS "createdAtClient",

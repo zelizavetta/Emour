@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useData } from '@/providers/DataProvider'
+import { WEEKDAY_LABELS, ALL_WEEKDAYS } from '@emour/core'
 
 const TIME_RE = /^([01]\d|2[0-3]):([0-5]\d)$/
 
@@ -10,10 +11,15 @@ export default function MedsPage() {
   const [dosage, setDosage] = useState('')
   const [times, setTimes] = useState<string[]>([])
   const [timeInput, setTimeInput] = useState('')
+  const [days, setDays] = useState<number[]>([...ALL_WEEKDAYS])
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
-  function reset() { setName(''); setDosage(''); setTimes([]); setTimeInput(''); setError('') }
+  function reset() { setName(''); setDosage(''); setTimes([]); setTimeInput(''); setDays([...ALL_WEEKDAYS]); setError('') }
+
+  function toggleDay(v: number) {
+    setDays(prev => prev.includes(v) ? (prev.length > 1 ? prev.filter(d => d !== v) : prev) : [...prev, v])
+  }
 
   function addTime() {
     const t = timeInput.trim()
@@ -28,7 +34,7 @@ export default function MedsPage() {
     if (times.length === 0) { setError('Добавьте хотя бы одно время'); return }
     setSaving(true)
     try {
-      await addMed(name.trim(), dosage.trim(), times)
+      await addMed(name.trim(), dosage.trim(), times, days)
       setShowForm(false)
       reset()
     } catch {
@@ -52,6 +58,16 @@ export default function MedsPage() {
           <p style={s.formTitle}>Новое лекарство</p>
           <input style={s.input} value={name} onChange={e => setName(e.target.value)} placeholder="Название" />
           <input style={s.input} value={dosage} onChange={e => setDosage(e.target.value)} placeholder="Дозировка (необязательно)" />
+          <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 6 }}>Дни приёма</p>
+          <div style={s.daysRow}>
+            {WEEKDAY_LABELS.map(({ value, short }) => (
+              <button
+                key={value}
+                style={{ ...s.dayChip, ...(days.includes(value) ? s.dayChipActive : {}) }}
+                onClick={() => toggleDay(value)}
+              >{short}</button>
+            ))}
+          </div>
           <div style={s.timeRow}>
             <input
               style={{ ...s.input, flex: 1, marginBottom: 0 }}
@@ -93,6 +109,13 @@ export default function MedsPage() {
               <div style={s.timeTags}>
                 {med.times.map(t => <span key={t} style={s.timeTag}>{t}</span>)}
               </div>
+              {med.days && med.days.length < 7 && (
+                <div style={{ ...s.timeTags, marginTop: 4 }}>
+                  {WEEKDAY_LABELS.filter(w => med.days.includes(w.value)).map(({ value, short }) => (
+                    <span key={value} style={{ ...s.timeTag, fontSize: 11, padding: '1px 8px', opacity: 0.8 }}>{short}</span>
+                  ))}
+                </div>
+              )}
             </div>
             <div style={s.cardRight}>
               <label style={s.toggle}>
@@ -130,6 +153,9 @@ const s: Record<string, React.CSSProperties> = {
   form: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, padding: 20, marginBottom: 20 },
   formTitle: { fontWeight: 600, marginBottom: 12, fontSize: 16 },
   input: { display: 'block', width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', borderRadius: 10, padding: '10px 14px', color: 'var(--text)', marginBottom: 10, outline: 'none', fontSize: 14 },
+  daysRow: { display: 'flex', gap: 6, marginBottom: 14, flexWrap: 'wrap' },
+  dayChip: { width: 36, height: 36, borderRadius: '50%', border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 12, fontWeight: 500 },
+  dayChipActive: { background: 'var(--secondary)', border: '1px solid var(--secondary)', color: '#fff', fontWeight: 700 },
   timeRow: { display: 'flex', gap: 8, alignItems: 'center', marginBottom: 10 },
   timeAddBtn: { padding: '10px 16px', background: 'var(--secondary)', border: 'none', borderRadius: 10, color: '#fff', fontSize: 18, cursor: 'pointer', flexShrink: 0 },
   tags: { display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 },

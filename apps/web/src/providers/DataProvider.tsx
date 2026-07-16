@@ -17,7 +17,7 @@ interface DataContextType {
   addFeeling: (type: FeelingType, score: number) => Promise<void>
   addSymptoms: (symptoms: string[]) => Promise<void>
   addNote: (title: string, text: string) => Promise<Note | null>
-  addMed: (name: string, dosage: string, times: string[]) => Promise<void>
+  addMed: (name: string, dosage: string, times: string[], days: number[]) => Promise<void>
   deleteMed: (id: number) => Promise<void>
   toggleMed: (id: number) => Promise<void>
 }
@@ -78,9 +78,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     return note
   }, [])
 
-  const addMed = useCallback(async (name: string, dosage: string, times: string[]) => {
+  const addMed = useCallback(async (name: string, dosage: string, times: string[], days: number[]) => {
     const { createdAtClient, clientTimezone } = now()
-    const med = await apiCreateMed(name, dosage, times, createdAtClient, clientTimezone)
+    const med = await apiCreateMed(name, dosage, times, days, createdAtClient, clientTimezone)
     setMeds(prev => [med, ...prev])
   }, [])
 

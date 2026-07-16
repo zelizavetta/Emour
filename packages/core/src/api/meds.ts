@@ -11,6 +11,7 @@ export async function apiCreateMed(
   name: string,
   dosage: string,
   times: string[],
+  days: number[],
   createdAtClient: string,
   clientTimezone: string,
 ): Promise<Med> {
@@ -18,6 +19,7 @@ export async function apiCreateMed(
     name,
     dosage,
     times,
+    days,
     createdAtClient,
     clientTimezone,
   });

@@ -1,8 +1,8 @@
-import { 
-    apiCreateFeelingRecord, 
-    apiGetAllFeelingRecord, 
-    FeelingType, 
-    Feeling, 
+import {
+    apiCreateFeelingRecord,
+    apiGetAllFeelingRecord,
+    FeelingType,
+    Feeling,
     UserContextType,
     Symptom,
     apiCreateSympomRecords,
@@ -10,10 +10,8 @@ import {
     Note,
     apiGetAllNotes,
     apiCreateNote,
-    Med,
-    apiGetAllMeds
  } from '@emour/core';
-import React, { createContext, useContext, useState, useCallback, ReactNode, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
 
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -22,21 +20,18 @@ export function UserProvider({ children }: { children: ReactNode }) {
     const [feelings, setFeelings] = useState<Feeling[]>([])
     const [symptoms, setSymptoms] = useState<Symptom[]>([])
     const [notes, setNotes] = useState<Note[]>([])
-    const [meds, setMeds] = useState<Med[]>([])
     const [isLoading, setIsLoading] = useState<boolean>(true)
 
     const loadRecords = useCallback(async () => {
         try {
-            const [feelings, symptoms, notes, meds] = await Promise.all([
+            const [feelings, symptoms, notes] = await Promise.all([
                 apiGetAllFeelingRecord(),
                 apiGetAllSymptomRecords(),
                 apiGetAllNotes(),
-                apiGetAllMeds()
             ])
             setFeelings(feelings)
             setSymptoms(symptoms)
             setNotes(notes)
-            setMeds(meds) 
         } catch (err) {
             console.warn('records load error', err)
         } finally {
@@ -128,29 +123,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
         text: string,
     ): Promise<number | null> => {
         return null
-    }, [])
-
-    const addMeds = useCallback(async(
-        name: string,
-        dosage: string,
-        frequency: string,
-        createdAtClient?: string,
-        clientTimezone?: string
-    ): Promise<Note | null> => {
-        const localTime = createdAtClient ?? new Date().toISOString();
-        const timezone = clientTimezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
-        try {
-            console.log('note: ', text)
-            const note = await apiCreateNote(title, text, localTime, timezone)
-            console.log(note)
-            if (note) {
-                setNotes(prev => [note, ...prev])
-            }
-            return note
-        } catch (err) {
-            console.warn('add note error', err)
-            return null
-        }
     }, [])
 
     const contextValue: UserContextType = {

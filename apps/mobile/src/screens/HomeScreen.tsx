@@ -1,6 +1,5 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { LineChart } from "react-native-gifted-charts";
-import { RadioButton, List, Checkbox } from "react-native-paper";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { RadioButton, Checkbox } from "react-native-paper";
 import { useEffect, useState } from "react";
 
 import AnxietySlider from "@/components/AnxietySlieder";
