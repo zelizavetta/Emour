@@ -18,6 +18,7 @@ import TextWrapper from '@/components/ui/textWrapper';
 import Button from '@/components/ui/button';
 import Card from '@/components/ui/card/card';
 import { useUserRecords } from '@/providers/UserContext';
+import { useAuth } from '@/providers/AuthProvider';
 import { Feeling, Symptom, DayPart, FeelingType } from '@emour/core';
 import { dropDownData, feelingItems, symptomItems } from '@/constants/data';
 import { formatDateTime, nowLocalTime } from '@/utils/time';
@@ -124,6 +125,7 @@ function buildSeries(
 
 export default function StatisticScreen() {
   const { feelings, symptoms, addFeelingRecord, addSymptomsRecord, isLoading, refresh } = useUserRecords();
+  const { isViewer } = useAuth();
   const { width: screenWidth } = useWindowDimensions();
 
   const [checked, setChecked] = useState<Record<string, boolean>>({});
@@ -510,13 +512,15 @@ export default function StatisticScreen() {
                     )}
                   </>
                 )}
-                <Button
-                  variant="secondary"
-                  style={styles.addHintBtn}
-                  onPress={() => setTab('add')}
-                >
-                  Изменить запись
-                </Button>
+                {!isViewer && (
+                  <Button
+                    variant="secondary"
+                    style={styles.addHintBtn}
+                    onPress={() => setTab('add')}
+                  >
+                    Изменить запись
+                  </Button>
+                )}
               </View>
             )}
 

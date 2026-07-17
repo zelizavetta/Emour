@@ -144,3 +144,4 @@ vite.config.ts.timestamp-*
 expo-env.d.ts
 *expo/
 # @end expo-cli
+android/
