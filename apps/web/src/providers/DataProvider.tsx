@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import {
-  Feeling, FeelingType, Symptom, Note, Med,
+  Feeling, FeelingType, Symptom, Note, Med, EmotionType,
   apiGetAllFeelingRecord, apiCreateFeelingRecord,
   apiGetAllSymptomRecords, apiCreateSympomRecords,
   apiGetAllNotes, apiCreateNote,
@@ -16,7 +16,7 @@ interface DataContextType {
   refresh: () => Promise<void>
   addFeeling: (type: FeelingType, score: number) => Promise<void>
   addSymptoms: (symptoms: string[]) => Promise<void>
-  addNote: (title: string, text: string) => Promise<Note | null>
+  addNote: (title: string, text: string, emotion?: EmotionType) => Promise<Note | null>
   addMed: (name: string, dosage: string, times: string[], days: number[]) => Promise<void>
   deleteMed: (id: number) => Promise<void>
   toggleMed: (id: number) => Promise<void>
@@ -71,9 +71,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     setSymptoms(prev => [...records, ...prev])
   }, [])
 
-  const addNote = useCallback(async (title: string, text: string): Promise<Note | null> => {
+  const addNote = useCallback(async (title: string, text: string, emotion: EmotionType = 'calm'): Promise<Note | null> => {
     const { createdAtClient, clientTimezone } = now()
-    const note = await apiCreateNote(title, text, createdAtClient, clientTimezone)
+    const note = await apiCreateNote(title, text, emotion, createdAtClient, clientTimezone)
     setNotes(prev => [note, ...prev])
     return note
   }, [])

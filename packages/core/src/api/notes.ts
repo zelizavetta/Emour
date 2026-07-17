@@ -1,15 +1,16 @@
 import { get, post, patch, del } from './api.js';
 import { ApiResponse } from '../types/api.js';
-import { Note } from '../types/notes.js';
+import { Note, EmotionType } from '../types/notes.js';
 
 
 export async function apiCreateNote(
-    title: string, 
-    text: string, 
+    title: string,
+    text: string,
+    emotion: EmotionType,
     createdAtClient: string,
     clientTimezone: string
   ): Promise<Note> {
-  const response = await post<ApiResponse<Note>>('/api/notes', { title, text, createdAtClient, clientTimezone });
+  const response = await post<ApiResponse<Note>>('/api/notes', { title, text, emotion, createdAtClient, clientTimezone });
   return response.data;
 }
 
@@ -23,12 +24,18 @@ export async function apiGetNoteById(noteId: number): Promise<Note> {
   return response.data;
 }
 
-export async function apiUpdateNoteTitle(noteId: number, title: string): Promise<number> {
-  const response = await patch<ApiResponse<number>>(`/api/notes/${noteId}`, { title });
+export async function apiUpdateNote(
+    noteId: number,
+    title: string,
+    text: string,
+    emotion: EmotionType,
+    createdAtClient: string,
+    clientTimezone: string
+  ): Promise<Note> {
+  const response = await patch<ApiResponse<Note>>(`/api/notes/${noteId}`, { title, text, emotion, createdAtClient, clientTimezone });
   return response.data;
 }
 
-export async function apiUpdateNoteText(noteId: number, text: string): Promise<number> {
-  const response = await patch<ApiResponse<number>>(`/api/notes/${noteId}`, { text });
-  return response.data;
+export async function apiDeleteNote(noteId: number): Promise<void> {
+  await del(`/api/notes/${noteId}`);
 }

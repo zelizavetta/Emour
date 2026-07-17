@@ -8,8 +8,11 @@ import {
     apiCreateSympomRecords,
     apiGetAllSymptomRecords,
     Note,
+    EmotionType,
     apiGetAllNotes,
     apiCreateNote,
+    apiUpdateNote,
+    apiDeleteNote,
  } from '@emour/core';
 import React, { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
 
@@ -92,15 +95,14 @@ export function UserProvider({ children }: { children: ReactNode }) {
     const addNote = useCallback(async(
         title: string,
         text: string,
+        emotion: EmotionType,
         createdAtClient?: string,
         clientTimezone?: string
     ): Promise<Note | null> => {
         const localTime = createdAtClient ?? new Date().toISOString();
         const timezone = clientTimezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
         try {
-            console.log('note: ', text)
-            const note = await apiCreateNote(title, text, localTime, timezone)
-            console.log(note)
+            const note = await apiCreateNote(title, text, emotion, localTime, timezone)
             if (note) {
                 setNotes(prev => [note, ...prev])
             }
@@ -111,18 +113,33 @@ export function UserProvider({ children }: { children: ReactNode }) {
         }
     }, [])
 
-    const updateNoteTitle = useCallback(async(
+    const updateNote = useCallback(async(
         noteId: number,
         title: string,
-    ): Promise<number | null> => {
-        return null
+        text: string,
+        emotion: EmotionType,
+        createdAtClient: string,
+        clientTimezone: string
+    ): Promise<Note | null> => {
+        try {
+            const note = await apiUpdateNote(noteId, title, text, emotion, createdAtClient, clientTimezone)
+            if (note) {
+                setNotes(prev => prev.map(n => n.id === noteId ? note : n))
+            }
+            return note
+        } catch (err) {
+            console.warn('update note error', err)
+            return null
+        }
     }, [])
 
-    const updateNoteText = useCallback(async(
-        noteId: number,
-        text: string,
-    ): Promise<number | null> => {
-        return null
+    const deleteNote = useCallback(async(noteId: number): Promise<void> => {
+        try {
+            await apiDeleteNote(noteId)
+            setNotes(prev => prev.filter(n => n.id !== noteId))
+        } catch (err) {
+            console.warn('delete note error', err)
+        }
     }, [])
 
     const contextValue: UserContextType = {
@@ -134,8 +151,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
         addFeelingRecord,
         addSymptomsRecord,
         addNote,
-        updateNoteTitle,
-        updateNoteText
+        updateNote,
+        deleteNote
     }
 
     return (
