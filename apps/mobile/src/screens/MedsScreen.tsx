@@ -10,6 +10,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import Button from '@/components/ui/button';
 import Card from '@/components/ui/card/card';
 import Screen from '@/components/ui/screen';
@@ -18,7 +19,7 @@ import { colors } from '@/constants/colors';
 import { Med, WEEKDAY_LABELS, ALL_WEEKDAYS } from '@emour/core';
 import { useMeds } from '@/providers/MedsProvider';
 
-const TIME_RE = /^([01]\d|2[0-3]):([0-5]\d)$/;
+const pad = (n: number) => String(n).padStart(2, '0');
 
 // Returns true if any scheduled time for this med was within the last 60 minutes today.
 function isOverdue(med: Med, takenToday: Set<number>): boolean {
@@ -53,14 +54,14 @@ export default function MedsScreen() {
   const [name, setName] = useState('');
   const [dosage, setDosage] = useState('');
   const [times, setTimes] = useState<string[]>([]);
-  const [timeInput, setTimeInput] = useState('');
+  const [showTimePicker, setShowTimePicker] = useState(false);
   const [days, setDays] = useState<number[]>([...ALL_WEEKDAYS]);
 
   function resetForm() {
     setName('');
     setDosage('');
     setTimes([]);
-    setTimeInput('');
+    setShowTimePicker(false);
     setDays([...ALL_WEEKDAYS]);
   }
 
@@ -72,18 +73,11 @@ export default function MedsScreen() {
     );
   }
 
-  function handleAddTime() {
-    const trimmed = timeInput.trim();
-    if (!TIME_RE.test(trimmed)) {
-      Alert.alert('Неверный формат', 'Введите время в формате чч:мм (например 08:30)');
-      return;
-    }
-    if (times.includes(trimmed)) {
-      setTimeInput('');
-      return;
-    }
-    setTimes(prev => [...prev, trimmed].sort());
-    setTimeInput('');
+  function onTimePicked(event: { type: string }, selected?: Date) {
+    setShowTimePicker(false);
+    if (event.type !== 'set' || !selected) return;
+    const value = `${pad(selected.getHours())}:${pad(selected.getMinutes())}`;
+    setTimes(prev => (prev.includes(value) ? prev : [...prev, value].sort()));
   }
 
   function handleRemoveTime(t: string) {
@@ -237,21 +231,18 @@ export default function MedsScreen() {
 
             <TextWrapper style={styles.label}>Время приёма</TextWrapper>
 
-            <View style={styles.timeInputRow}>
-              <TextInput
-                style={[styles.input, styles.timeInputField]}
-                value={timeInput}
-                onChangeText={setTimeInput}
-                placeholder="чч:мм"
-                placeholderTextColor="#666"
-                keyboardType="numbers-and-punctuation"
-                maxLength={5}
-                onSubmitEditing={handleAddTime}
+            <Pressable onPress={() => setShowTimePicker(true)} style={styles.timeAddRow}>
+              <TextWrapper style={styles.timeAddRowText}>+ Добавить время</TextWrapper>
+            </Pressable>
+            {showTimePicker && (
+              <DateTimePicker
+                value={new Date()}
+                mode="time"
+                is24Hour
+                display="clock"
+                onChange={onTimePicked}
               />
-              <Pressable onPress={handleAddTime} style={styles.timeAddBtn}>
-                <TextWrapper style={styles.timeAddBtnText}>+</TextWrapper>
-              </Pressable>
-            </View>
+            )}
 
             <ScrollView style={styles.timeList}>
               {times.map(t => (
@@ -378,27 +369,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ffffff11',
   },
-  timeInputRow: {
-    flexDirection: 'row',
-    gap: 8,
-    alignItems: 'center',
-  },
-  timeInputField: {
-    flex: 1,
-    marginBottom: 0,
-  },
-  timeAddBtn: {
-    backgroundColor: colors.secondary,
+  timeAddRow: {
+    backgroundColor: colors.secondary + '22',
     borderRadius: 10,
-    width: 42,
-    height: 42,
+    borderWidth: 1,
+    borderColor: colors.secondary,
+    paddingVertical: 12,
     alignItems: 'center',
-    justifyContent: 'center',
   },
-  timeAddBtnText: {
-    fontSize: 24,
+  timeAddRowText: {
+    fontSize: 15,
     color: colors.text,
-    lineHeight: 26,
   },
   timeList: {
     maxHeight: 140,

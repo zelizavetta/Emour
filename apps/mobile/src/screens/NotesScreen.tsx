@@ -5,13 +5,13 @@ import {
     Modal,
     Platform,
     Pressable,
-    ScrollView,
     StyleSheet,
     TextInput,
     View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import Button from "@/components/ui/button";
 import Card from "@/components/ui/card/card";
 import Screen from "@/components/ui/screen";
@@ -21,38 +21,18 @@ import { formatDateTime } from "@/utils/time";
 import { useUserRecords } from "@/providers/UserContext";
 import { Note, EmotionType, EMOTIONS, emotionPolarity } from "@emour/core";
 
-const DATE_RE = /^(\d{2})\.(\d{2})\.(\d{4})$/;
 const deviceTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 const pad = (n: number) => String(n).padStart(2, "0");
-
-function todayStr(): string {
-    const n = new Date();
-    return `${pad(n.getDate())}.${pad(n.getMonth() + 1)}.${n.getFullYear()}`;
-}
 
 function isoToDateStr(iso: string, tz: string): string {
     const [y, m, d] = formatDateTime(iso, tz).slice(0, 10).split("-");
     return `${d}.${m}.${y}`;
 }
 
-function isoToTimeOfDay(iso: string, tz: string) {
-    const [hh, mm, ss] = formatDateTime(iso, tz).slice(11).split(":").map(Number);
-    return { hh, mm, ss };
-}
-
-// Combine a "DD.MM.YYYY" string + a time-of-day into a UTC ISO instant using
-// the device's local timezone, which is what gets stored as clientTimezone.
-function buildIso(dateStr: string, tod: { hh: number; mm: number; ss: number }): string | null {
-    const m = DATE_RE.exec(dateStr.trim());
-    if (!m) return null;
-    const d = Number(m[1]);
-    const mo = Number(m[2]);
-    const y = Number(m[3]);
-    const dt = new Date(y, mo - 1, d, tod.hh, tod.mm, tod.ss);
-    if (isNaN(dt.getTime())) return null;
-    if (dt.getDate() !== d || dt.getMonth() !== mo - 1) return null; // reject 31.02 etc.
-    return dt.toISOString();
+// Device-local date label for the picker button.
+function dateLabel(d: Date): string {
+    return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()}`;
 }
 
 function emotionMeta(value: EmotionType) {
@@ -71,18 +51,16 @@ export default function NotesScreen() {
     const [title, setTitle] = useState("");
     const [text, setText] = useState("");
     const [emotion, setEmotion] = useState<EmotionType>("joy");
-    const [dateStr, setDateStr] = useState(todayStr());
-    // Preserve time-of-day so editing only the date doesn't zero the clock.
-    const [timeOfDay, setTimeOfDay] = useState({ hh: 12, mm: 0, ss: 0 });
+    // Full instant for the note; picking a date keeps the existing time-of-day.
+    const [noteDate, setNoteDate] = useState<Date>(new Date());
+    const [showDatePicker, setShowDatePicker] = useState(false);
 
     function openCreate() {
-        const now = new Date();
         setEditingId(null);
         setTitle("");
         setText("");
         setEmotion("joy");
-        setDateStr(todayStr());
-        setTimeOfDay({ hh: now.getHours(), mm: now.getMinutes(), ss: now.getSeconds() });
+        setNoteDate(new Date());
         setPopupVisible(true);
     }
 
@@ -91,13 +69,20 @@ export default function NotesScreen() {
         setTitle(note.title);
         setText(note.text);
         setEmotion(note.emotion);
-        setDateStr(isoToDateStr(note.createdAtClient, note.clientTimezone));
-        setTimeOfDay(isoToTimeOfDay(note.createdAtClient, note.clientTimezone));
+        setNoteDate(new Date(note.createdAtClient));
         setPopupVisible(true);
     }
 
     function closePopup() {
+        setShowDatePicker(false);
         setPopupVisible(false);
+    }
+
+    function onDatePicked(event: { type: string }, selected?: Date) {
+        setShowDatePicker(false);
+        if (event.type === "set" && selected) {
+            setNoteDate(selected);
+        }
     }
 
     async function handleSave() {
@@ -105,11 +90,7 @@ export default function NotesScreen() {
             Alert.alert("Укажите название записи");
             return;
         }
-        const iso = buildIso(dateStr, timeOfDay);
-        if (!iso) {
-            Alert.alert("Неверная дата", "Введите дату в формате дд.мм.гггг");
-            return;
-        }
+        const iso = noteDate.toISOString();
         setPopupVisible(false);
         if (editingId === null) {
             await addNote(title.trim(), text.trim(), emotion, iso, deviceTz);
@@ -213,15 +194,19 @@ export default function NotesScreen() {
                                 maxLength={100}
                             />
 
-                            <TextInput
-                                style={styles.input}
-                                value={dateStr}
-                                onChangeText={setDateStr}
-                                placeholder="дд.мм.гггг"
-                                placeholderTextColor="#666"
-                                keyboardType="numbers-and-punctuation"
-                                maxLength={10}
-                            />
+                            <Pressable style={styles.input} onPress={() => setShowDatePicker(true)}>
+                                <TextWrapper style={styles.dateFieldText}>
+                                    {dateLabel(noteDate)}
+                                </TextWrapper>
+                            </Pressable>
+                            {showDatePicker && (
+                                <DateTimePicker
+                                    value={noteDate}
+                                    mode="date"
+                                    display="calendar"
+                                    onChange={onDatePicked}
+                                />
+                            )}
 
                             <View style={styles.emotionGrid}>
                                 {EMOTIONS.map(opt => {
@@ -371,6 +356,11 @@ const styles = StyleSheet.create({
         fontSize: 15,
         borderWidth: 1,
         borderColor: "#ffffff11",
+    },
+    dateFieldText: {
+        textAlign: "left",
+        color: colors.text,
+        fontSize: 15,
     },
     textArea: {
         flex: 1,

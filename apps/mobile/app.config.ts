@@ -8,6 +8,7 @@ const config: ExpoConfig = {
   slug: "my-expo-app",
   plugins: [
     "expo-secure-store",
+    "@react-native-community/datetimepicker",
     [
       "expo-notifications",
       {
