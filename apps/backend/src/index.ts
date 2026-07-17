@@ -9,6 +9,7 @@ import { router as notesRoutes } from './routes/notes'
 import { router as medsRoutes } from './routes/meds'
 import { errorHandler } from './errorHandler'
 import { requireAuth } from './middleware/auth'
+import { blockViewerWrites } from './middleware/requireOwner'
 
 const app = express()
 app.use(express.json())
@@ -27,10 +28,10 @@ app.get('/', (_req, res) => {
 })
 
 app.use('/api/auth', authRoutes)
-app.use('/api/feelings', requireAuth, feelingsRoutes)
-app.use('/api/symptoms', requireAuth, symptomsRoutes)
-app.use('/api/notes', requireAuth, notesRoutes)
-app.use('/api/meds', requireAuth, medsRoutes)
+app.use('/api/feelings', requireAuth, blockViewerWrites, feelingsRoutes)
+app.use('/api/symptoms', requireAuth, blockViewerWrites, symptomsRoutes)
+app.use('/api/notes', requireAuth, blockViewerWrites, notesRoutes)
+app.use('/api/meds', requireAuth, blockViewerWrites, medsRoutes)
 
 app.use(errorHandler)
 

@@ -13,13 +13,17 @@ import MedsScreen from "@/screens/MedsScreen";
 import { MainTabParamList } from "@/types/navigation";
 import { colors } from "@/constants/colors";
 import { fonts } from "@/constants/fonts";
+import { useAuth } from "@/providers/AuthProvider";
 
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 export default function MainTabs() {
+  const { isViewer } = useAuth();
+
   return (
     <Tab.Navigator
+      initialRouteName="Statistic"
       screenOptions={({ route }) => ({
         tabBarStyle: {
           paddingBottom: 10,
@@ -54,26 +58,32 @@ export default function MainTabs() {
         }
       })}
     >
-      <Tab.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{ tabBarLabel: "Home" }}
-      />
+      {!isViewer && (
+        <Tab.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{ tabBarLabel: "Home" }}
+        />
+      )}
       <Tab.Screen
         name="Statistic"
         component={StatisticScreen}
         options={{ tabBarLabel: "Statistic" }}
       />
-      <Tab.Screen
-        name="Notes"
-        component={NotesScreen}
-        options={{ tabBarLabel: "Notes" }}
-      />
-      <Tab.Screen
-        name="Meds"
-        component={MedsScreen}
-        options={{ tabBarLabel: "Meds" }}
-      />
+      {!isViewer && (
+        <Tab.Screen
+          name="Notes"
+          component={NotesScreen}
+          options={{ tabBarLabel: "Notes" }}
+        />
+      )}
+      {!isViewer && (
+        <Tab.Screen
+          name="Meds"
+          component={MedsScreen}
+          options={{ tabBarLabel: "Meds" }}
+        />
+      )}
       {/* <Tab.Screen
         name="Welcome"
         component={WelcomeScreen}

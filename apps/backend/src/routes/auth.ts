@@ -9,14 +9,23 @@ export const router = express.Router()
 router.post('/login', asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body
 
-  if (
-    email !== process.env.APP_EMAIL ||
-    password !== process.env.APP_PASSWORD
+  let role: 'owner' | 'viewer' | null = null
+
+  if (email === process.env.APP_EMAIL && password === process.env.APP_PASSWORD) {
+    role = 'owner'
+  } else if (
+    process.env.VIEWER_EMAIL &&
+    email === process.env.VIEWER_EMAIL &&
+    password === process.env.VIEWER_PASSWORD
   ) {
+    role = 'viewer'
+  }
+
+  if (!role) {
     throw ApiError.unauthorized('Invalid email or password')
   }
 
-  const token = jwt.sign({ auth: true }, process.env.JWT_SECRET!, { expiresIn: '90d' })
+  const token = jwt.sign({ auth: true, role }, process.env.JWT_SECRET!, { expiresIn: '90d' })
 
-  ApiSuccess.ok(res, { token })
+  ApiSuccess.ok(res, { token, role })
 }))

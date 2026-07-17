@@ -1,13 +1,17 @@
 import React, { useState } from "react";
 import {
     Alert,
+    KeyboardAvoidingView,
     Modal,
+    Platform,
     Pressable,
     ScrollView,
     StyleSheet,
     TextInput,
     View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
 import Button from "@/components/ui/button";
 import Card from "@/components/ui/card/card";
 import Screen from "@/components/ui/screen";
@@ -165,10 +169,15 @@ export default function NotesScreen() {
                                     </View>
                                 )}
                                 {note.text ? (
-                                    <TextWrapper style={styles.noteText} numberOfLines={4}>
+                                    <TextWrapper style={styles.noteText}>
                                         {note.text}
                                     </TextWrapper>
                                 ) : null}
+                                <LinearGradient
+                                    colors={[colors.background + "00", colors.background]}
+                                    style={styles.noteFade}
+                                    pointerEvents="none"
+                                />
                             </Card>
                         </Pressable>
                     );
@@ -178,19 +187,23 @@ export default function NotesScreen() {
             <Modal
                 visible={popupVisible}
                 animationType="slide"
-                transparent
                 onRequestClose={closePopup}
             >
-                <View style={styles.modalContainer}>
-                    <Pressable style={{ flex: 1 }} onPress={closePopup} />
-                    <View style={styles.sheet}>
-                        <View style={styles.sheetHandle} />
-                        <ScrollView contentContainerStyle={{ paddingBottom: 24 }} keyboardShouldPersistTaps="handled">
+                <SafeAreaView style={styles.fullScreen} edges={["top", "bottom"]}>
+                    <KeyboardAvoidingView
+                        style={styles.fullScreen}
+                        behavior={Platform.OS === "ios" ? "padding" : undefined}
+                    >
+                        <View style={styles.editorHeader}>
                             <TextWrapper variant="title" style={styles.modalTitle}>
                                 {editingId === null ? "Новая запись" : "Редактировать запись"}
                             </TextWrapper>
+                            <Pressable onPress={closePopup} hitSlop={12} style={styles.closeBtn}>
+                                <TextWrapper style={styles.closeBtnText}>×</TextWrapper>
+                            </Pressable>
+                        </View>
 
-                            <TextWrapper style={styles.label}>Название</TextWrapper>
+                        <View style={styles.editorTop}>
                             <TextInput
                                 style={styles.input}
                                 value={title}
@@ -200,7 +213,6 @@ export default function NotesScreen() {
                                 maxLength={100}
                             />
 
-                            <TextWrapper style={styles.label}>Дата</TextWrapper>
                             <TextInput
                                 style={styles.input}
                                 value={dateStr}
@@ -211,7 +223,6 @@ export default function NotesScreen() {
                                 maxLength={10}
                             />
 
-                            <TextWrapper style={styles.label}>Эмоция</TextWrapper>
                             <View style={styles.emotionGrid}>
                                 {EMOTIONS.map(opt => {
                                     const active = emotion === opt.value;
@@ -233,18 +244,25 @@ export default function NotesScreen() {
                                     );
                                 })}
                             </View>
+                        </View>
 
-                            <TextWrapper style={styles.label}>Текст</TextWrapper>
-                            <TextInput
-                                style={[styles.input, styles.textArea]}
-                                value={text}
-                                onChangeText={setText}
-                                placeholder="Что на душе?"
-                                placeholderTextColor="#666"
-                                multiline
-                            />
+                        <TextInput
+                            style={styles.textArea}
+                            value={text}
+                            onChangeText={setText}
+                            placeholder="Что на душе?"
+                            placeholderTextColor="#666"
+                            multiline
+                            textAlignVertical="top"
+                        />
 
-                            <View style={styles.modalButtons}>
+                        <View style={styles.editorFooter}>
+                            {editingId !== null && (
+                                <Pressable onPress={handleDelete} style={styles.deleteLink}>
+                                    <TextWrapper style={styles.deleteLinkText}>Удалить</TextWrapper>
+                                </Pressable>
+                            )}
+                            <View style={styles.footerButtons}>
                                 <Button variant="secondary" onPress={closePopup}>
                                     Отмена
                                 </Button>
@@ -252,15 +270,9 @@ export default function NotesScreen() {
                                     Сохранить
                                 </Button>
                             </View>
-
-                            {editingId !== null && (
-                                <Pressable onPress={handleDelete} style={styles.deleteLink}>
-                                    <TextWrapper style={styles.deleteLinkText}>Удалить запись</TextWrapper>
-                                </Pressable>
-                            )}
-                        </ScrollView>
-                    </View>
-                </View>
+                        </View>
+                    </KeyboardAvoidingView>
+                </SafeAreaView>
             </Modal>
         </>
     );
@@ -278,6 +290,8 @@ const styles = StyleSheet.create({
     noteCard: {
         marginBottom: 12,
         borderLeftWidth: 4,
+        maxHeight: 150,
+        overflow: "hidden",
     },
     noteHeader: {
         flexDirection: "row",
@@ -312,39 +326,39 @@ const styles = StyleSheet.create({
         color: "#ddd",
         fontSize: 14,
     },
+    noteFade: {
+        position: "absolute",
+        left: 0,
+        right: 0,
+        bottom: 0,
+        height: 44,
+    },
 
-    // Modal
-    modalContainer: {
+    // Full-screen editor
+    fullScreen: {
         flex: 1,
-        backgroundColor: "#000000aa",
-    },
-    sheet: {
-        maxHeight: "88%",
         backgroundColor: colors.background,
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
-        padding: 24,
-        paddingTop: 12,
-        borderTopWidth: 1,
-        borderColor: colors.secondary + "44",
     },
-    sheetHandle: {
-        alignSelf: "center",
-        width: 40,
-        height: 4,
-        borderRadius: 2,
-        backgroundColor: "#ffffff33",
-        marginBottom: 12,
+    editorHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingHorizontal: 24,
+        paddingTop: 8,
+    },
+    closeBtn: {
+        padding: 4,
+    },
+    closeBtnText: {
+        fontSize: 30,
+        lineHeight: 32,
+        color: colors.text,
+    },
+    editorTop: {
+        paddingHorizontal: 24,
     },
     modalTitle: {
-        marginBottom: 16,
-        textAlign: "left",
-    },
-    label: {
-        color: "#aaa",
-        fontSize: 13,
-        marginBottom: 6,
-        marginTop: 4,
+        marginBottom: 0,
         textAlign: "left",
     },
     input: {
@@ -359,8 +373,19 @@ const styles = StyleSheet.create({
         borderColor: "#ffffff11",
     },
     textArea: {
-        minHeight: 100,
-        textAlignVertical: "top",
+        flex: 1,
+        marginHorizontal: 24,
+        marginTop: 4,
+        marginBottom: 12,
+        backgroundColor: "#ffffff0f",
+        borderRadius: 10,
+        paddingHorizontal: 14,
+        paddingVertical: 12,
+        color: colors.text,
+        fontSize: 16,
+        lineHeight: 22,
+        borderWidth: 1,
+        borderColor: "#ffffff11",
     },
     emotionGrid: {
         flexDirection: "row",
@@ -378,15 +403,21 @@ const styles = StyleSheet.create({
         fontSize: 13,
         color: colors.text,
     },
-    modalButtons: {
+    editorFooter: {
         flexDirection: "row",
-        justifyContent: "center",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingHorizontal: 24,
+        paddingBottom: 8,
         gap: 12,
-        marginTop: 16,
+    },
+    footerButtons: {
+        flexDirection: "row",
+        gap: 12,
+        marginLeft: "auto",
     },
     deleteLink: {
-        marginTop: 18,
-        alignSelf: "center",
+        paddingVertical: 8,
     },
     deleteLinkText: {
         color: colors.danger,

@@ -1,5 +1,5 @@
 import { Feeling, FeelingType } from "./feelings.js"
-import { Note } from "./notes.js"
+import { Note, EmotionType } from "./notes.js"
 import { Symptom } from "./symptoms.js"
 
 
@@ -22,16 +22,20 @@ export interface UserContextType {
     addNote: (
         title: string,
         text: string,
-        createdAtClient?: string, 
+        emotion: EmotionType,
+        createdAtClient?: string,
         clientTimezone?: string
     ) => Promise<Note | null>,
-    updateNoteTitle: (
+    updateNote: (
         noteId: number,
-        title: string
-    ) => Promise<number | null>,
-    updateNoteText: (
-        noteId: number,
-        text: string
-    ) => Promise<number | null>,
+        title: string,
+        text: string,
+        emotion: EmotionType,
+        createdAtClient: string,
+        clientTimezone: string
+    ) => Promise<Note | null>,
+    deleteNote: (
+        noteId: number
+    ) => Promise<void>,
     refresh: () => Promise<void>
 }

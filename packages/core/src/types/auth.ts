@@ -1,5 +1,8 @@
+export type UserRole = 'owner' | 'viewer';
+
 export interface AuthTokens {
   token: string;
+  role: UserRole;
 }
 
 export interface LoginRequest {
